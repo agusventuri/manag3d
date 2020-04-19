@@ -1,0 +1,30 @@
+Para acceder a la base de datos via web usar las siguientes credenciales
+
+URL: https://console.clever-cloud.com/
+User: danielfpaz1@gmail.com
+pass: y6s.k9gVWAgHJUi
+
+
+/*Codigo simple para probar la conexion en phyton*/
+// Se debe instalar pymysql en la rurta que tengan instalado phyton
+
+import pymysql	#library required for connection to the database.  
+
+#Configuration of the connection variable.
+conn = pymysql.connect(
+	
+	host = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com", #server
+	user = "ufi5pvu38rgxyyki",		#user
+	passwd = "wDA27vy9GAK4UVepDOHx",		#user password
+	db = "bxgiympztcdyk1mlijne")		#database name
+
+cursor = conn.cursor()  #connection pointer to the database.
+
+cursor.execute("SELECT * from impresiones") #executes the query to the database.
+
+#print query result
+for row in cursor:
+	print(row)
+
+cursor.close() #close the pointer to the database.
+conn.close()   #close the connection to the database.
