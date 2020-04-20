@@ -69,7 +69,8 @@ import Paho from 'paho-mqtt';
 var subscription = "prueba";
 
 function onConnect() {
-  console.log("onConnect");
+  console.log("onConnect josue");
+  mqttCli.subscribe(subscription);
 }
 
 function onConnectionLost(responseObject) {
@@ -80,11 +81,11 @@ function onConnectionLost(responseObject) {
 
 function onMessageArrived(message) {
   console.log("onMessageArrived:"+message.payloadString);
-  alert(this.props.message);
+
 }
 
 function Connected() {
-  console.log("Connected");
+  console.log("Connected, estamos conectectados");
   mqttCli.subscribe(subscription);
 }
 
@@ -94,12 +95,10 @@ var mqttCli = new Paho.Client("ws://192.168.1.18:9001/mqtt", "myCLientId" + new 
 //var mqttCli = new Paho.mqttCli(hostname, clientId + new Date().getTime())
 
 mqttCli.connect({ onSuccess: onConnect})
-
 //mqttCli.connect({ onSuccess: onConnect })
 // establecer manejadores de devolución de llamada
 mqttCli.onMessageArrived = onMessageArrived;
 mqttCli.onConnectionLost = onConnectionLost;
-
 
 class MensajeMQTT extends Component{
   //state= {hora: new Date().toLocaleTimeString()}
