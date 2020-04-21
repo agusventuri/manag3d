@@ -1,7 +1,7 @@
-class Printer() :
+class Printer:
 
-    def __init__(self, id, name, x, y, z):
-        self.id = id
+    def __init__(self, printer_id, name, x, y, z):
+        self.printer_id = printer_id
         self.name = name
         self.x = x
         self.y = y
@@ -11,5 +11,5 @@ class Printer() :
         pass
 
     def get_state(self):
-        #return json state of changed items
+        # return json state of changed items
         pass

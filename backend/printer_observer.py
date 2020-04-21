@@ -50,7 +50,7 @@ class PrinterObserver():
 
 po = PrinterObserver("192.168.0.3", ["test"])
 state = None
-while (True):
+while True:
 
     new_state = po.get_state()
     time.sleep(1)
