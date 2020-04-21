@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from backend.printer_observer import PrinterObserver
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
-
+po = PrinterObserver("192.168.0.3", ["test"])
 
 @app.route("/")
 def index():
@@ -16,10 +16,10 @@ def hello():
 
 @app.route("/dashboard")
 def dashboard():
-    po = PrinterObserver("localhost", ["test"])
     msg = None
     while (msg is None):
-        po.get_state()
+        print("uff")
+        msg = po.get_state()
 
     return str(msg)
 
