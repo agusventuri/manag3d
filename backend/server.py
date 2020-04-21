@@ -6,7 +6,7 @@ po = PrinterObserver("192.168.0.3", ["test"])
 
 @app.route("/")
 def index():
-    return render_template("/home/agus97v/IdeaProjects/manag3d/frontend/src/test.html")
+    return "Bienvenido a Manag3d"
 
 
 @app.route("/hello")
