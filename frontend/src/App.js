@@ -1,9 +1,10 @@
-import React,{Component, useState} from 'react';
+import React,{Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Paho from 'paho-mqtt';
 import './itemDashboard.css';
 import PrinterInformation from './itemDashboard.js';
+import icon3d from './impresion.svg'
 
 
 
@@ -70,9 +71,9 @@ class ManagerMQTT extends Component{
       )
     }
     )
-    var estaEnDash = false;
-    
 
+    //aca agregamos las impresoras nuevas al dashboard 
+    var estaEnDash = false;
     Object.keys(this.state.impresora).forEach(key => {
       //console.log("esto compara "+this.state.impresora[key].printer_id+"  "+JSON.parse(message.payloadString)[0].printer_id)
       if (this.state.impresora[key].printer_id===JSON.parse(message.payloadString)[0].printer_id) {//esta comparacion esta ok
@@ -131,18 +132,19 @@ class App extends Component {
     return (
       <div className="App">
           <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
+            {/*<img src={logo} className="App-logo" alt="logo" />*/}
+            <img src={icon3d} className="App-logo" alt="logo" />
             <p>
-                Bienvenidos.
+                Bienvenidos a ManagƐd.
             </p>
-            <a
+            {/*<a
               className="App-link"
               href="https://reactjs.org"
               target="_blank"
               rel="noopener noreferrer"
             >
                 Learn React
-            </a>
+            </a>*/}
 
           </header>
  

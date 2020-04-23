@@ -17,9 +17,12 @@ class PrinterInformation extends Component{
 							 	<div className="job">
 							 		<p>Start time: {printer[currency].jobs[jobcurrency].start_time}</p>
 							 		<p>Finish time: {printer[currency].jobs[jobcurrency].finish_time}</p>
-							 		<p>Completion: {printer[currency].jobs[jobcurrency].completion} %</p>
+							 		<p>Completion: {printer[currency].jobs[jobcurrency].completion}%</p>
 							 		<p>Print time: {printer[currency].jobs[jobcurrency].print_time}</p>
-							 		<p>Print time left: {printer[currency].jobs[jobcurrency].print_time_left}</p>
+							 		{printer[currency].jobs[jobcurrency].completion >59 
+							 			? <p>Print time left: {printer[currency].jobs[jobcurrency].print_time_left}</p>
+							 			:<p>Print time left: {printer[currency].jobs[jobcurrency].file.estimated_time -printer[currency].jobs[jobcurrency].print_time}</p>
+							 		}
 							 		<table className="file">
 							 			<tbody>
 							 				<tr>
