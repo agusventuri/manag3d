@@ -71,9 +71,9 @@ class Printer:
         for key, value in self.jobs.items():
             jobs.append(value.jsonify())
         return {
-            "id": self.id,
+            "printer_id": self.id,
+            "printer_name": self.name,
             "printer_state": self.text,
-            "name": self.name,
             "jobs": jobs
         }
 

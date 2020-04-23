@@ -34,9 +34,7 @@ class PrinterObserver:
         pds_text = printer_data_state["text"]
 
         self.update_printer(printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
-        pass
-        self.dispatch_mqtt_update(printer_id)
-        pass
+        self.dispatch_mqtt_update(client, printer_id)
 
     def on_disconnect(self, client, userdata, rc=0):
         print("Disconnected result code "+str(rc))
@@ -70,16 +68,9 @@ class PrinterObserver:
         printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
         print(str(printer))
 
-    def dispatch_mqtt_update(self, printer_id):
-        dump = json.dumps(self.printers[printer_id].jsonify())
-
-        client = mqtt.Client("Miself")
-        client.connect(self.broker)
-        client.loop_start()
+    def dispatch_mqtt_update(self, client, printer_id):
+        dump = "[" + json.dumps(self.printers[printer_id].jsonify()) + "]"
         client.publish("prueba", dump)
-        client.disconnect()
-        client.loop_stop()
-        pass
 
 
 po = PrinterObserver("192.168.0.3", ["printer/+/progress/#"])
