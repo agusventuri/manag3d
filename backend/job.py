@@ -1,7 +1,6 @@
 class Job:
 
-    def __init__(self, file, printer):
-        self.printer = printer
+    def __init__(self, file):
         self.file = file
         self.completion = 0
         self.print_time = 0
