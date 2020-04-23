@@ -1,0 +1,15 @@
+"guiones": {
+
+"start": "node node_modules / react-native / local-cli / cli.js start",
+
+"prueba": "broma",
+
+"ios": "react-native run-ios --simulator = 'iPhone SE'",
+
+"android": "react-native run-android",
+
+"ios-big": "react-native run-ios",
+
+"build-android": "cd android && ./gradlew assembleRelease"
+
+},
