@@ -14,3 +14,10 @@ class File:
         text += "\n\tSTL location:\t" + str(self.filepath_stl)
         text += "\n\tGCODE location:\t" + str(self.filepath_gcode)
         return text
+
+    def jsonify(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "estimated_time": self.estimated_time
+        }

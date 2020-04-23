@@ -65,3 +65,15 @@ class Printer:
         text += str(self.jobs["1"])
         text += "\n--------------------------------------------------------"
         return text
+
+    def jsonify(self):
+        jobs = []
+        for key, value in self.jobs.items():
+            jobs.append(value.jsonify())
+        return {
+            "id": self.id,
+            "printer_state": self.text,
+            "name": self.name,
+            "jobs": jobs
+        }
+

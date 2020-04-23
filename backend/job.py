@@ -32,3 +32,14 @@ class Job:
         text += "\n\tCustomer: \t" + str(self.customer)
         text += str(self.file)
         return text
+
+    def jsonify(self):
+        return {
+            "start_time": self.start_time,
+            "finish_time": self.finish_time,
+            "completion": self.completion,
+            "print_time": self.print_time,
+            "print_time_left": self.print_time_left,
+            "customer": self.customer,
+            "file": self.file.jsonify()
+        }
