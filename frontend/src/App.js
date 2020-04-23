@@ -1,76 +1,16 @@
 import React,{Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
-
-
 import Paho from 'paho-mqtt';
-// import { Client, Message } from 'paho-mqtt';
+import './itemDashboard.css';
+import PrinterInformation from './itemDashboard.js';
+import icon3d from './impresion.svg'
 
 
-// //Set up an in-memory alternative to global localStorage
-
-// const myStorage = {
-//   setItem: (key, item) => {
-//     myStorage[key] = item;
-//   },
-//   getItem: (key) => myStorage[key],
-//   removeItem: (key) => {
-//     delete myStorage[key];
-//   },
-// };
-
-// // Create a client instance
-// const client = new Client({ uri: 'ws://192.168.1.18:1883', clientId: 'clientId', storage: myStorage });
- 
-// // set event handlers
-// client.on('connectionLost', (responseObject) => {
-//   if (responseObject.errorCode !== 0) {
-//     console.log(responseObject.errorMessage);
-//   }
-// });
-// client.on('messageReceived', (message) => {
-//   console.log(message.payloadString);
-// });
- 
-// // connect the client
-// client.connect()
-//   .then(() => {
-//     // Once a connection has been made, make a subscription and send a message.
-//     console.log('onConnect');
-//     return client.subscribe('World');
-//   })
-//   .then(() => {
-//     const message = new Message('Hello');
-//     message.destinationName = 'World';
-//     client.send(message);
-//   })
-//   .catch((responseObject) => {
-//     if (responseObject.errorCode !== 0) {
-//       console.log('onConnectionLost:' + responseObject.errorMessage);
-//     }
-//   })
-// ;
-
-
-
-
-
-
-//import init from 'react_native_mqtt';
-//import { AsyncStorage } from 'react-native';
-//ar hostname = "m21.cloudmqtt.com";
-//var port = 37719;
-//var hostname="ws:192.168.1.18"
-//var clientId = "myClientId";
-//var clientId = new Date().getUTCMilliseconds();;
-//var username = "webclient";
-//var password = "Super$icher123";
-
-var subscription = "prueba";
 
 function onConnect() {
-  console.log("onConnect josue");
-  mqttCli.subscribe(subscription);
+ console.log("onConnect josue");
+ mqttCli.subscribe(subscription);
 }
 
 function onConnectionLost(responseObject) {
@@ -79,62 +19,141 @@ function onConnectionLost(responseObject) {
   }
 }
 
-function onMessageArrived(message) {
-  console.log("onMessageArrived:"+message.payloadString);
-
-}
-
-function Connected() {
-  console.log("Connected, estamos conectectados");
-  mqttCli.subscribe(subscription);
-}
-
-//var mqttCli = new Paho.Client(hostname,Number(port), clientId);
-var mqttCli = new Paho.Client("ws://192.168.1.18:9001/mqtt", "myCLientId" + new Date().getTime())
-//var mqttCli = new Paho.MQTT.Client(hostname, clientId + new Date().getTime())
-//var mqttCli = new Paho.mqttCli(hostname, clientId + new Date().getTime())
-
+var mqttCli=new Paho.Client("ws://192.168.1.18:9001/mqtt", "myCLientId" + new Date().getTime())
+var subscription="prueba";
 mqttCli.connect({ onSuccess: onConnect})
-//mqttCli.connect({ onSuccess: onConnect })
-// establecer manejadores de devolución de llamada
-mqttCli.onMessageArrived = onMessageArrived;
 mqttCli.onConnectionLost = onConnectionLost;
 
-class MensajeMQTT extends Component{
-  //state= {hora: new Date().toLocaleTimeString()}
-  state= {texto: "hola"}
+class ManagerMQTT extends Component{
+
+  state={impresora:[{
+    "printer_id": 0,
+    "printer_name": "",
+    "printer_state": "",
+    "jobs": [
+      {
+        "start_time":0,
+        "finish_time": 0,
+        "completion": 0,
+        "print_time": 0,
+        "print_time_left":0,
+        "customer":"",
+        "file": {
+          "id":0,
+          "name":"",
+          "estimated_time":0
+        }
+      }]
+    }]
+  }
+
+  onMessageArrived = message => {
+    //esto pisa el state
+    //this.setState({impresora: JSON.parse(message.payloadString)});
+
+    //actualizamos estados de impresoras que ya están en el dashboard
+    this.setState({impresora:  Object.keys(this.state.impresora).map( imp => {
+            // console.log("imp: "+this.state.impresora[imp].printer_id)
+            // console.log("esto comp el if: "+this.state.impresora[imp].printer_id+" "+JSON.parse(message.payloadString)[0].printer_id)
+            if (this.state.impresora[imp].printer_id===0){
+              return (JSON.parse(message.payloadString)[0])
+            }else{
+              if(this.state.impresora[imp].printer_id===JSON.parse(message.payloadString)[0].printer_id){
+                return (JSON.parse(message.payloadString)[0])
+            }else{
+                
+                //return JSON.parse( (this.state.impresora).push( JSON.parse(message.payloadString)[0] ) ) 
+                return this.state.impresora[imp]
+              } 
+            }
+            
+          }
+      )
+    }
+    )
+
+    //aca agregamos las impresoras nuevas al dashboard 
+    var estaEnDash = false;
+    Object.keys(this.state.impresora).forEach(key => {
+      //console.log("esto compara "+this.state.impresora[key].printer_id+"  "+JSON.parse(message.payloadString)[0].printer_id)
+      if (this.state.impresora[key].printer_id===JSON.parse(message.payloadString)[0].printer_id) {//esta comparacion esta ok
+          estaEnDash = true;
+        }
+      });
+    if(estaEnDash===false){
+        //si es una imp que no esta en el dashboard, la agrego al state
+        var estado= this.state.impresora
+        console.log("NO EST EN DASHBOARD")
+        console.log("ESTO PUSHEO  "+  JSON.parse(message.payloadString)[0] )
+        //this.setState({impresora: (this.state.impresora).unshift( JSON.stringify( JSON.parse(message.payloadString)[0] ) ) })
+        estado.push(JSON.parse(message.payloadString)[0])
+        console.log("var estado: "+estado)
+        this.setState({impresora:estado})
+     }
+
+    //this.setState(newState);
+
+}
+
+  componentDidMount() {
+     this.props.mqttCli.onMessageArrived = this.onMessageArrived;
+     console.log("se ejecuto didmount")
+  }
   render(){
+      console.log("state  :"+this.state.impresora)
+      // console.log("primer impresora "+this.state.impresora[0])
+      // console.log("primer id "+this.state.impresora[0].printer_id)
+      // console.log("cant items"+this.state.impresora.length)
+      if(this.state.impresora[0].printer_id===0){
+        return null
+      }
     return(
-      <p> {this.state.texto} </p>
+      <div>
+      <table>
+          <thead>
+            <tr >
+              <th className="titLeft">Name</th>
+              <th className="titCenter">State</th>
+              <th className="titCenter">Jobs</th>
+            </tr>
+          </thead>
+          {<tbody><PrinterInformation printer={this.state.impresora}/></tbody>}
+        </table>
+      </div>
     )
   }
 }
 
+
+
 class App extends Component {
+
   render(){
     return (
       <div className="App">
           <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
+            {/*<img src={logo} className="App-logo" alt="logo" />*/}
+            <img src={icon3d} className="App-logo" alt="logo" />
             <p>
-                Bienvenidos.
+                Bienvenidos a ManagƐd.
             </p>
-            <a
+            {/*<a
               className="App-link"
               href="https://reactjs.org"
               target="_blank"
               rel="noopener noreferrer"
             >
                 Learn React
-            </a>
+            </a>*/}
 
           </header>
  
-      <h1>Tablero sobre estado de las impresoras </h1>
+      <h1 className="titDashboard">Tablero sobre estado de las impresoras </h1>
       <div>
-          <MensajeMQTT />
-
-
+          <ManagerMQTT 
+          mqttCli={mqttCli}
+          suscription={subscription}
+          />
       </div>
 
       </div>    
