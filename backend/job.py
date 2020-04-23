@@ -14,7 +14,8 @@ class Job:
         self.file = File(self.id, row[1], row[9], row[10], row[11])
 
     def set_start_time(self, start_time):
-        self.start_time = start_time
+        if self.start_time is None:
+            self.start_time = start_time
 
     def set_finish_time(self, finish_time):
         self.finish_time = finish_time

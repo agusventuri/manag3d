@@ -76,9 +76,4 @@ class PrinterObserver:
 po = PrinterObserver("192.168.0.3", ["printer/+/progress/#"])
 state = None
 while True:
-
-    new_state = po.get_state()
-    time.sleep(1)
-    if str(state) != str(new_state):
-        state = new_state.copy()
-        # print(state)
+    pass

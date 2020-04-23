@@ -17,7 +17,7 @@ class Printer:
 
         cursor = conn.cursor()  # connection pointer to the database.
 
-        cursor.execute("SELECT * from impresoras WHERE id_impresora=" + "1")
+        cursor.execute("SELECT * from impresoras WHERE id_impresora=" + self.id)
 
         row = cursor.fetchall()
         if len(row) != 1:
@@ -43,11 +43,6 @@ class Printer:
 
     def add_job(self, row, print_time, print_time_left, completion):
         self.jobs[str(row[0])] = Job(row, print_time, print_time_left, completion)
-        pass
-
-    def get_state(self):
-        # return json state of changed items
-        pass
 
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id):
         self.timestamp = timestamp
@@ -56,6 +51,8 @@ class Printer:
         if job is None:
             self.add_job(job_id, print_time, print_time_left, completion)
         else:
+            if text == "Printing":
+                job.set_start_time(timestamp)
             job.update(print_time, print_time_left, completion)
 
     def __str__(self):
