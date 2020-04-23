@@ -1,7 +1,8 @@
 import json
 import time
-from datetime import datetime
 import paho.mqtt.client as mqtt
+
+from backend.printer import Printer
 
 
 class PrinterObserver:
@@ -22,7 +23,7 @@ class PrinterObserver:
 
         timestamp = parsed_message["_timestamp"]
 
-        path = parsed_message["path"]
+        job_id = parsed_message["path"].split(".")[0]
 
         printer_data = parsed_message["printer_data"]
 
@@ -34,19 +35,7 @@ class PrinterObserver:
         printer_data_state = printer_data["state"]
         pds_text = printer_data_state["text"]
 
-        print("Printer id:\t" + str(printer_id))
-
-        print("Timestamp: \t" + str(timestamp))
-
-        print("Progress: \t" + str(pdp_completion) + "%")
-        print("Print time:\t" + str(pdp_print_time) + "s")
-        print("Time left: \t" + str(pdp_print_time_left) + "s")
-
-        print("State: \t\t" + pds_text)
-
-        print("Filename: \t" + path)
-
-        print("------------------------------")
+        self.update_printer(printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
 
     def on_disconnect(self, client, userdata, rc=0):
         print("Disconnected result code "+str(rc))
@@ -73,6 +62,16 @@ class PrinterObserver:
 
     def get_state(self):
         return self.printers
+
+    def update_printer(self,
+                       printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id):
+        printer = self.printers.get(printer_id)
+        if printer is None:
+            printer = Printer(printer_id,
+                              timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
+            self.printers[printer_id] = printer
+        printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
+        print(str(printer))
 
 
 po = PrinterObserver("192.168.0.3", ["printer/+/progress/#"])
