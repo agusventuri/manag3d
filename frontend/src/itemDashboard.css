@@ -1,0 +1,26 @@
+/* .printer{
+	vertical-align: text-top;
+	font-size: 20px;
+	float: left; 
+}
+.titLeft{
+
+	font-size: 30px;
+	float: left; 
+} */
+.job{
+	background-color: blue;
+	color: white;
+	float: right;
+}
+.file{
+	background-color: violet;
+	color: black;
+}
+/* .titDashboard{
+	font-size: 60px;
+}
+.titCenter{
+
+	font-size: 30px;
+} */
