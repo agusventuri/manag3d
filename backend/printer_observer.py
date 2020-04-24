@@ -24,8 +24,6 @@ class PrinterObserver:
         timestamp = parsed_message["_timestamp"]
         job_id = parsed_message["path"].split(".")[0]
 
-        print(parsed_message)
-
         if topic_split[2] == self.topic_progress_split[2]:
             printer_data = parsed_message["printer_data"]
 
@@ -37,22 +35,19 @@ class PrinterObserver:
             printer_data_state = printer_data["state"]
             pds_text = printer_data_state["text"]
         else:
-        #elif topic_split[2] == self.topic_events_split[2]:
             pdp_completion = 0
             pdp_print_time = 0
             pdp_print_time_left = 0
             pds_text = parsed_message["_event"]
 
-        self.update_printer(printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
-        self.dispatch_mqtt_update(client, printer_id)
+        self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
 
     def on_disconnect(self, client, userdata, rc=0):
         print("Disconnected result code "+str(rc))
         client.loop_stop()
 
     def observe(self):
-        # client = mqtt.Client("Miself", True, None, mqtt.MQTTv311)
-        client = mqtt.Client("Miself")
+        client = mqtt.Client("printer_observer")
 
         # Bind function to callback
         client.on_message = self.on_message
@@ -69,7 +64,7 @@ class PrinterObserver:
     def get_state(self):
         return self.printers
 
-    def update_printer(self,
+    def update_printer(self, client,
                        printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id):
         printer = self.printers.get(printer_id)
         if printer is None:
@@ -77,7 +72,8 @@ class PrinterObserver:
                               timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
             self.printers[printer_id] = printer
         printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
-        #print(str(printer))
+        print(str(printer))
+        self.dispatch_mqtt_update(client, printer_id)
 
     def dispatch_mqtt_update(self, client, printer_id):
         dump = "[" + json.dumps(self.printers[printer_id].jsonify()) + "]"

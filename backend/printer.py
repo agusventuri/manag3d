@@ -1,6 +1,11 @@
 from backend.job import Job
 import pymysql
 
+db_host = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com"    # server
+db_user = "ufi5pvu38rgxyyki"  		                                # user
+db_passwd = "wDA27vy9GAK4UVepDOHx"		                            # user password
+db_name = "bxgiympztcdyk1mlijne"		                            # database name
+
 
 class Printer:
 
@@ -9,19 +14,13 @@ class Printer:
         self.id = printer_id
         self.timestamp = timestamp
 
-        conn = pymysql.connect(
-            host="bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com",    # server
-            user="ufi5pvu38rgxyyki",		                                # user
-            passwd="wDA27vy9GAK4UVepDOHx",		                            # user password
-            db="bxgiympztcdyk1mlijne")		                                # database name
-
+        conn = pymysql.connect(host=db_host, user=db_user, passwd=db_passwd, db=db_name)
         cursor = conn.cursor()  # connection pointer to the database.
-
         cursor.execute("SELECT * from impresoras WHERE id_impresora=" + self.id)
-
         row = cursor.fetchall()
         cursor.close()
         conn.close()
+
         if len(row) != 1:
             self.name = "Unnamed"
             self.x = None
@@ -34,22 +33,16 @@ class Printer:
             self.z = row[0][4]
 
         self.jobs = {}
-
         self.add_job(job_id, pdp_print_time, pdp_print_time_left, pdp_completion)
 
     def add_job(self, job_id, print_time, print_time_left, completion):
-        conn = pymysql.connect(
-            host="bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com",    # server
-            user="ufi5pvu38rgxyyki",		                                # user
-            passwd="wDA27vy9GAK4UVepDOHx",		                            # user password
-            db="bxgiympztcdyk1mlijne")		                                # database name
-
+        conn = pymysql.connect(host=db_host, user=db_user, passwd=db_passwd, db=db_name)
         cursor = conn.cursor()  # connection pointer to the database.
-
         cursor.execute("SELECT * FROM impresiones WHERE id=" + job_id)
         row = cursor.fetchone()
         cursor.close()
         conn.close()
+
         self.jobs[str(row[0])] = Job(row, print_time, print_time_left, completion)
 
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id):
@@ -74,7 +67,8 @@ class Printer:
         text = "Printer " + self.name
         text += "\n\tTimestamp: \t" + str(self.timestamp)
         text += "\n\tState: \t\t" + self.text
-        text += str(self.jobs["1"])
+        for key, value in self.jobs.items():
+            text += str(value)
         text += "\n--------------------------------------------------------"
         return text
 
@@ -82,7 +76,6 @@ class Printer:
         jobs = []
         for key, value in self.jobs.items():
             jobs.append(value.jsonify())
-        pass
         return {
             "printer_id": self.id,
             "printer_name": self.name,

@@ -6,7 +6,7 @@ class Job:
     def __init__(self, row, print_time, print_time_left, completion):
         self.id = row[0]
         self.customer = row[5]
-        self.completion = completion if completion is not None else 0
+        self.completion = completion if completion is not None else "0"
         self.print_time = print_time
         self.print_time_left = print_time_left
         self.start_time = None
@@ -21,7 +21,7 @@ class Job:
         self.finish_time = finish_time
 
     def update(self, print_time, print_time_left, completion):
-        self.completion = completion
+        self.completion = completion if completion is not None else "0"
         self.print_time = print_time
         self.print_time_left = print_time_left
 
