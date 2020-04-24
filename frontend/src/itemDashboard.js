@@ -1,4 +1,5 @@
 import React,{Component} from 'react';
+import moment from 'moment';
 import './App.css';
 import './itemDashboard.css'
 
@@ -15,13 +16,13 @@ class PrinterInformation extends Component{
 						{ Object.keys(printer[currency].jobs).map(jobcurrency =>
 							<td key={jobcurrency}>
 							 	<div className="job">
-							 		<p>Start time: {printer[currency].jobs[jobcurrency].start_time}</p>
-							 		<p>Finish time: {printer[currency].jobs[jobcurrency].finish_time}</p>
-							 		<p>Completion: {printer[currency].jobs[jobcurrency].completion}%</p>
-							 		<p>Print time: {printer[currency].jobs[jobcurrency].print_time}</p>
+							 		<p>Start time: { moment( (new Date(printer[currency].jobs[jobcurrency].start_time).toString()) ).format("DD-MM-YYYY HH:MM:SS")}</p>
+							 		<p>Finish time: {moment( (new Date(printer[currency].jobs[jobcurrency].finish_time).toString()) ).format("DD-MM-YYYY HH:MM:SS")  }</p>
+							 		<p>Completion: {printer[currency].jobs[jobcurrency].completion.toFixed(2)}%</p>
+							 		<p>Print time: { (moment( (new Date(printer[currency].jobs[jobcurrency].print_time).toString()) ).format("hh:mm:ss") )}</p>
 							 		{printer[currency].jobs[jobcurrency].completion >59 
-							 			? <p>Print time left: {printer[currency].jobs[jobcurrency].print_time_left}</p>
-							 			:<p>Print time left: {printer[currency].jobs[jobcurrency].file.estimated_time -printer[currency].jobs[jobcurrency].print_time}</p>
+							 			? <p>Print time left: { (moment( (new Date(printer[currency].jobs[jobcurrency].print_time_left).toString()) ).format("hh:mm:ss") ) }</p>
+							 			:<p>Print time left: {moment( (new Date( printer[currency].jobs[jobcurrency].file.estimated_time -printer[currency].jobs[jobcurrency].print_time ).toString()) ).format("hh:mm:ss") }</p>
 							 		}
 							 		<table className="file">
 							 			<tbody>
@@ -46,15 +47,3 @@ class PrinterInformation extends Component{
 	}
 }
 export default PrinterInformation
-
-// {
-//           this.state.ideas.map(({title, premises, conclusion}, i) => (
-//             <div key={i} className="card">
-//               <div className="card-body">
-//                 <h1>{title}</h1>
-//                 {premises.map((premise, j) => <p key={j}>{premise}</p>)}
-//                 <p>{conclusion}</p>
-//               </div>
-//             </div>
-//           ))
-//         }
