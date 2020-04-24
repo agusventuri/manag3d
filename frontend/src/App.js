@@ -7,8 +7,9 @@ import './App.css';
 import Paho from 'paho-mqtt';
 import './itemDashboard.css';
 import PrinterInformation from './itemDashboard.js';
-import icon3d from './impresion.svg'
-import Dashboard from './Dashboard.js'
+import icon3d from './impresion.svg';
+import Dashboard from './Dashboard.js';
+import Tutorial from './Tutorial.js'
 
 class App extends Component {
   render(){
@@ -27,11 +28,11 @@ class App extends Component {
               exact
               path="/Dashboard.js"
               render={() => <Dashboard name="Dashboard impresoras" />} />
-           {/* <Route
+            <Route
               exact
-              path="/Tutorial"
+              path="/Tutorial.js"
               render={() => <Tutorial name="Tutorial configuración impresoras" />} />
-            <Route component={PageError} />*/}
+            {/*<Route component={PageError} />*/}
           </Switch>
         </div>
       </BrowserRouter>
@@ -56,11 +57,11 @@ class Inicio extends Component{
             		</p>
 {/*            		<a
               		className="App-link"
-              		href="localhost:3000/dashboard.js"
+              		href="localhost:3000/tutorial.html"
               		target="_blank"
               		rel="noopener noreferrer"
             		>
-                		Dashboard de impresoras
+                		tutorial
             		</a>*/}
             		<button onClick={() => this.handlePagClick('./Dashboard.js')}>Dashboard de impresoras</button>
             		<button onClick={() => this.handlePagClick('./Tutorial.js')}>Tutorial impresoras</button>
