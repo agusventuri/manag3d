@@ -7,8 +7,10 @@ from backend.printer import Printer
 
 class PrinterObserver:
 
-    def __init__(self, broker, topics_list):
-        self.TOPICS = topics_list
+    def __init__(self, broker, topics_dict):
+        self.TOPICS = topics_dict
+        self.topic_progress_split = self.TOPICS["topic_progress"].split("/")
+        self.topic_events_split = self.TOPICS["topic_events"].split("/")
         self.broker = broker
         self.printers = {}
         self.nro = 0
@@ -17,21 +19,29 @@ class PrinterObserver:
     def on_message(self, client, userdata, message):
         parsed_message = json.loads(str(message.payload.decode("utf-8")))
 
-        printer_id = message.topic.split("/")[1]
-
+        topic_split = message.topic.split("/")
+        printer_id = topic_split[1]
         timestamp = parsed_message["_timestamp"]
-
         job_id = parsed_message["path"].split(".")[0]
 
-        printer_data = parsed_message["printer_data"]
+        print(parsed_message)
 
-        printer_data_progress = printer_data["progress"]
-        pdp_completion = printer_data_progress["completion"]
-        pdp_print_time = printer_data_progress["printTime"]
-        pdp_print_time_left = printer_data_progress["printTimeLeft"]
+        if topic_split[2] == self.topic_progress_split[2]:
+            printer_data = parsed_message["printer_data"]
 
-        printer_data_state = printer_data["state"]
-        pds_text = printer_data_state["text"]
+            printer_data_progress = printer_data["progress"]
+            pdp_completion = printer_data_progress["completion"]
+            pdp_print_time = printer_data_progress["printTime"]
+            pdp_print_time_left = printer_data_progress["printTimeLeft"]
+
+            printer_data_state = printer_data["state"]
+            pds_text = printer_data_state["text"]
+        else:
+        #elif topic_split[2] == self.topic_events_split[2]:
+            pdp_completion = 0
+            pdp_print_time = 0
+            pdp_print_time_left = 0
+            pds_text = parsed_message["_event"]
 
         self.update_printer(printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
         self.dispatch_mqtt_update(client, printer_id)
@@ -53,7 +63,8 @@ class PrinterObserver:
         client.loop_start()
 
         # subscribing to topics
-        client.subscribe(self.TOPICS[0])
+        client.subscribe(self.TOPICS["topic_progress"])
+        client.subscribe(self.TOPICS["topic_events"])
 
     def get_state(self):
         return self.printers
@@ -66,14 +77,19 @@ class PrinterObserver:
                               timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
             self.printers[printer_id] = printer
         printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
-        print(str(printer))
+        #print(str(printer))
 
     def dispatch_mqtt_update(self, client, printer_id):
         dump = "[" + json.dumps(self.printers[printer_id].jsonify()) + "]"
-        client.publish("prueba", dump)
+        client.publish(self.TOPICS["topic_dispatch"], dump)
 
 
-po = PrinterObserver("192.168.0.3", ["printer/+/progress/#"])
+topics = {
+    "topic_progress": "printer/+/progress/#",
+    "topic_events": "printer/+/events/#",
+    "topic_dispatch": "prueba"
+    }
+po = PrinterObserver("192.168.0.3", topics)
 state = None
 while True:
     pass
