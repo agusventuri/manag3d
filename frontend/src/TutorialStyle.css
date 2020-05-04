@@ -70,3 +70,11 @@
         right:20px;
         border-radius: 30px;
     }
+
+    img.big{
+        width: 100%;
+    }
+    .dialog{
+        margin-left: 66px;
+        margin-top: -500px;
+    }

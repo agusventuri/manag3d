@@ -2,7 +2,7 @@ import React,{Component} from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter,Switch,Route,Redirect,Link} from 'react-router-dom';
 import './TutorialStyle.css';
-import './TutorialStyle.js';
+import Zoom from './TutorialStyle.js';
 import paso1 from './imagenes/paso1.PNG';
 import paso2 from './imagenes/paso2.PNG';
 import paso3 from './imagenes/paso3.PNG';
@@ -48,20 +48,21 @@ class Tutorial extends Component {
                         <ul> 
                             <li><u>Paso 1</u></li>
                             <p>Lo primero que vamos hacer es ir a nuestro octoprint y seleccionar <em>Settings</em> (<i class="fa fa-wrench"></i>) y seleccionar <em>Plugin Manager</em> , tal cual indica la figura.</p>
-                            <div class="pasos">
-                                <img src={paso1} alt="paso1"  width="80%"/>
+
+                            <div className="pasos">
+                            <Zoom source={paso1}/>
                             </div>
                             <li><u>Paso 2</u></li>
                             <p>Ahora vamos a escribir <em>mqtt</em> en el buscador de plugins y haremos click en <em>Install</em> una vez se encuentre el plugin. </p>
                             <div class="pasos">
-                                <img src={paso2} alt="paso1"  width="80%"/>
+                                <Zoom source={paso2}/>
                             </div>
                             <li><u>Paso 3</u></li>
                             <p>Esperamos un ratito y nos aparecera iun mensaje como el siguiente diciendonos que se instalo correctamente el plugin.
                                 Ahora procedemos a reiniciar el servicio de OctoPrint para poder visualizar el plugin instalado.
                             </p>                           
                             <div class="pasos">
-                                <img src={paso3} alt="paso1" width="80%"/>
+                                <Zoom source={paso3}/>
                             </div>
                             <blockquote>
                                 <p>
@@ -72,7 +73,7 @@ class Tutorial extends Component {
                             <p>Nuevamente nos vamos a <em>Settings</em>  (<i class="fa fa-wrench"></i>) y ahora podremos visualizar el plugin instalado a nuestra izquierda bajo el nombre de MQTT
                             Aqui deberemos configurar el plugin colocando en el campo host la <em>IP</em> de donde esté instalado nuestro software. </p>
                             <div class="pasos">
-                                <img src={paso4} alt="paso1"  width="80%"/>
+                                <Zoom source={paso4}/>
                             </div>   
                             <li><u>Paso 5</u></li> 
                             <blockquote>
