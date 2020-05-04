@@ -23,7 +23,7 @@ function onConnectionLost(responseObject) {
   }
 }
 
-var mqttCli=new Paho.Client("ws://192.168.0.3:9001/mqtt", "myCLientId" + new Date().getTime())
+var mqttCli=new Paho.Client("ws://192.168.1.18:9001/mqtt", "myCLientId" + new Date().getTime())
 var subscription="prueba";
 mqttCli.connect({ onSuccess: onConnect})
 mqttCli.onConnectionLost = onConnectionLost;

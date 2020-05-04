@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import moment from 'moment';
 import './App.css';
 import './itemDashboard.css'
+import {FormatIntToDateTime,FormatIntToTime} from './FormatDateTime.js';
 
 class PrinterInformation extends Component{
 	_renderPrinters(){
@@ -17,16 +18,13 @@ class PrinterInformation extends Component{
 						{Object.keys(printer[currency].jobs).map(jobcurrency =>
 							<td key={jobcurrency}>
 							 	<div className="job">
-									<p>Start time: { moment((new Date((printer[currency].jobs[jobcurrency].start_time)*1000).toString())).format("DD-MM-YYYY HH:MM:SS")}</p>
-									<p>Finish time: { moment((new Date((printer[currency].jobs[jobcurrency].finish_time)*1000).toString())).format("DD-MM-YYYY HH:MM:SS")}</p>
+									<p>Start time: {FormatIntToDateTime(printer[currency].jobs[jobcurrency].start_time)}</p>
+									<p>Finish time: {FormatIntToDateTime(printer[currency].jobs[jobcurrency].finish_time)}</p>
 							 		<p>Completion: {printer[currency].jobs[jobcurrency].completion.toFixed(2)}%</p>
-									{/*<p>Print time: { (moment( (new Date((printer[currency].jobs[jobcurrency].print_time)*1000).toString())).format("hh:mm:ss") )}</p>*/}
-									<p>Print time: { Math.floor(printer[currency].jobs[jobcurrency].print_time / 60 / 60) + "hs "
-																		+ (Math.floor(printer[currency].jobs[jobcurrency].print_time / 60) - Math.floor(printer[currency].jobs[jobcurrency].print_time / 60 / 60) * 60) + "m "
-																		+ (printer[currency].jobs[jobcurrency].print_time % 60) + "s"}</p>
+									<p>Print time:  {FormatIntToTime(printer[currency].jobs[jobcurrency].print_time)}</p>
 									{printer[currency].jobs[jobcurrency].completion >59
-										? <p>Print time left: { printer[currency].jobs[jobcurrency].print_time_left + "s" }</p>
-										: <p>Print time left: { printer[currency].jobs[jobcurrency].estimated_time - printer[currency].jobs[jobcurrency].print_time + "s" }</p>
+										? <p>Print time left: {FormatIntToTime(printer[currency].jobs[jobcurrency].print_time_left)}</p>
+										: <p>Print time left: {FormatIntToTime(printer[currency].jobs[jobcurrency].file.estimated_time-printer[currency].jobs[jobcurrency].print_time)}</p>
 							 		}
 							 		<table className="file">
 							 			<tbody>
