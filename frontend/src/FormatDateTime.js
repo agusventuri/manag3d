@@ -1,10 +1,9 @@
-import React,{Component} from 'react';
+import React from 'react';
 import moment from 'moment';
 import './App.css';
 
 
 function FormatIntToTime(number){
-	console.log('print time left '+number)
 	if(!number){
 		return "---"
 	}else{
@@ -14,19 +13,45 @@ function FormatIntToTime(number){
 		+ (number % 60) + "s"
 		)
 	}
-	
 }
 
 function FormatIntToDateTime(number){
-	console.log('number '+number)
+	console.log('hora actual segundos: '+parseInt(new Date().getTime() / 1000))
 	if(!number){
 		return "---"
 	}else{
 		return(
-		 moment((new Date((number)*1000).toString())).format("DD-MM-YYYY HH:MM:SS")
+		 moment((new Date((number)*1000).toString())).format("DD-MM-YYYY HH:mm:ss")
 		)
-	}
-	
+	}	
 }
 
-export  {FormatIntToTime,FormatIntToDateTime};
+function FormatFinishTime(number,jobstate){
+	var actual=parseInt(new Date().getTime() / 1000)
+	var res= number+actual
+	res= moment((new Date((res)*1000).toString())).format("DD-MM-YYYY HH:mm:ss")
+	if(jobstate!=="Finalizado"){
+		return res+" (estimado)"
+	}else{
+		return res
+	}
+
+}
+
+function GetFinishTime(finish_time,print_time_left,diff,completion,job_state){
+	//Si no hay finish time definido, calculamos una estimación
+	if(!finish_time){
+		//Hago esta comparacion porque el finish time depende de print_time left
+		if(completion >59){
+			return <p>Finish time: {FormatFinishTime(print_time_left,job_state)}</p>
+		}else{
+			return <p>Finish time: {FormatFinishTime(diff,job_state)}</p>
+			}
+	}else{
+		//hay un finish_time, por lo tanto solo lo mostramos
+		return <p>Finish time: {FormatIntToDateTime(finish_time)}</p>
+		}
+}
+
+
+export  {FormatIntToTime,FormatIntToDateTime,FormatFinishTime,GetFinishTime};

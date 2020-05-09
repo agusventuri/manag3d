@@ -36,6 +36,7 @@ class ManagerMQTT extends Component{
     "printer_state": "",
     "jobs": [
       {
+        "job_state":"",
         "start_time":0,         //fecha
         "finish_time": 0,       //fecha
         "completion": 0,
@@ -89,13 +90,15 @@ class ManagerMQTT extends Component{
         var estado= this.state.impresora
         //this.setState({impresora: (this.state.impresora).unshift( JSON.stringify( JSON.parse(message.payloadString)[0] ) ) })
         estado.push(JSON.parse(message.payloadString)[0])
+        this.setState({estado});
      }
+
+     console.log('ESTA EN DASH: '+estaEnDash)
 
 }
 
   componentDidMount() {
      this.props.mqttCli.onMessageArrived = this.onMessageArrived;
-     console.log("se ejecuto didmount")
   }
   render(){
       if(this.state.impresora[0].printer_id===0){
@@ -119,18 +122,12 @@ class ManagerMQTT extends Component{
 }
 
 class Dashboard extends Component {
-
     handlePagClick = (pag) => {
       return this.props.history.push(pag);
   }
   render(){
     return (
       <div className="Dashboard">
-         {/* <header className="App-header">
-          </header>*/}
-       {/* <div>
-          <button onClick={() => this.handlePagClick('./App.js')}>Inicio</button>
-        </div>*/}
         <h1 className="titDashboard">Tablero sobre estado de las impresoras </h1>
         <div>
           <ManagerMQTT 
