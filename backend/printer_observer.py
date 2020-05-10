@@ -85,7 +85,7 @@ topics = {
     "topic_events": "printer/+/events/#",
     "topic_dispatch": "prueba"
     }
-po = PrinterObserver("192.168.0.3", topics)
+po = PrinterObserver("192.168.0.174", topics)
 state = None
 while True:
     pass

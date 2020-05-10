@@ -23,7 +23,7 @@ function onConnectionLost(responseObject) {
   }
 }
 
-var mqttCli=new Paho.Client("ws://192.168.0.3:9001/mqtt", "myCLientId" + new Date().getTime())
+var mqttCli=new Paho.Client("ws://localhost:9001/mqtt", "myCLientId" + new Date().getTime())
 var subscription="prueba";
 mqttCli.connect({ onSuccess: onConnect})
 mqttCli.onConnectionLost = onConnectionLost;
@@ -89,6 +89,7 @@ class ManagerMQTT extends Component{
         var estado= this.state.impresora
         //this.setState({impresora: (this.state.impresora).unshift( JSON.stringify( JSON.parse(message.payloadString)[0] ) ) })
         estado.push(JSON.parse(message.payloadString)[0])
+        this.setState({estado})
      }
 
 }
@@ -102,18 +103,21 @@ class ManagerMQTT extends Component{
         return null
       }
     return(
-      <div>
-      <table>
-          <thead>
-            <tr >
-              <th className="titLeft">Name</th>
-              <th className="titCenter">State</th>
-              <th className="titCenter">Jobs</th>
-            </tr>
-          </thead>
-          {<tbody><PrinterInformation printer={this.state.impresora}/></tbody>}
-        </table>
-      </div>
+        <div>
+          <table id="tableroDashboard" className="table table-responsive">
+              <thead>
+              <tr>
+                  <th colspan="2" className="headerImpresora">Impresoras</th>
+                  <th colspan="10" rowSpan="2" className="trabajos">Trabajos</th>
+              </tr>
+                <tr >
+                  <th className="titLeft">Nombre</th>
+                  <th className="titCenter">Estado</th>
+                </tr>
+              </thead>
+              {<tbody className="bodyDashboard"><PrinterInformation printer={this.state.impresora}/></tbody>}
+            </table>
+        </div>
     )
   }
 }
@@ -126,19 +130,23 @@ class Dashboard extends Component {
   render(){
     return (
       <div className="Dashboard">
-         {/* <header className="App-header">
-          </header>*/}
-       {/* <div>
-          <button onClick={() => this.handlePagClick('./App.js')}>Inicio</button>
-        </div>*/}
-        <h1 className="titDashboard">Tablero sobre estado de las impresoras </h1>
-        <div>
-          <ManagerMQTT 
-          mqttCli={mqttCli}
-          suscription={subscription}
-          />
-        </div>
-
+             {/* <header className="App-header">
+              </header>*/}
+           {/* <div>
+              <button onClick={() => this.handlePagClick('./App.js')}>Inicio</button>
+            </div>*/}
+            <div className="titDashboard">
+                <h1 >Tablero sobre estado de las impresoras </h1>
+            </div>
+            <div class="row flex-xl-nowrap">
+                <div className="col-md-1 col-xl-1" >
+                </div>
+                <div className="col-md-8 col-xl-8" >
+                    <ManagerMQTT mqttCli={mqttCli} suscription={subscription}/>
+                </div>
+                <div className="col-md-3 col-xl-3" >
+                </div>
+            </div>
       </div>    
       );
   }

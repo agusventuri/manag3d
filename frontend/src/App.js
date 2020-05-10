@@ -15,7 +15,7 @@ class App extends Component {
   render(){
     return (
        <BrowserRouter>
-        <div>
+        <div className="container-fluid">
 {/*          <NavBar />*/}
           <Redirect
             from="/"
