@@ -40,6 +40,8 @@ class PrinterObserver:
             pdp_print_time_left = 0
             pds_text = parsed_message["_event"]
 
+        print(parsed_message)
+
         self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
 
     def on_disconnect(self, client, userdata, rc=0):
@@ -82,7 +84,7 @@ class PrinterObserver:
 
 topics = {
     "topic_progress": "printer/+/progress/#",
-    "topic_events": "printer/+/events/#",
+    "topic_events": "printer/+/event/#",
     "topic_dispatch": "prueba"
     }
 po = PrinterObserver("192.168.0.3", topics)
