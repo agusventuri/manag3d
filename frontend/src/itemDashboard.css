@@ -32,8 +32,18 @@
 	min-width: 600px;
 	font-size: 25px;
 }
+/*
+#tableroDashboard{
+	height: 500px;
+}*/
 
 #tableroDashboard th {
+	text-align: center;
+	border: 2px solid #dee2e6 !important;
+	background-color: #dee2e670;
+}
+
+#tableroPendientes th {
 	text-align: center;
 	border: 2px solid #dee2e6 !important;
 	background-color: #dee2e670;
@@ -48,7 +58,6 @@
 }
 
 .card{
-	width: 25%;
 	float: left;
 }
 
@@ -79,6 +88,36 @@
 	padding: 0px !important;
 }
 
+.jobsTd{
+	width: 170px;
+	padding: 8px 5px !important;
+}
+
+.pendientesTd .card.text-dark.bg-light{
+	width: 200px;
+}
+
+.jobsTd .card.text-dark.bg-light {
+	width: 140px;
+}
+
+.divPrincipal{
+	background-color: #f8f9fa!important;
+	height: 500px;
+	overflow: auto;
+}
+
+.divPendientes {
+	background-color: #f8f9fa!important;
+	overflow: auto;
+	height: 500px;
+}
+
+.principalPendiente{
+	/*padding: 0px;*/
+}
+
+
 .stateTd .list-group-item {
 	height: 300px;
 }
@@ -95,4 +134,35 @@
 .stateTd .list-group-item div {
 	margin: 38px 0px;
 	font-size: 21px;
+}
+
+.impresora-printing{
+	background-color: #c3e6cb;
+}
+
+.impresora-idle{
+	background-color: white;
+}
+
+.impresora-default{
+	background-color: red;
+}
+/*estados jobs */
+.job-pending{
+	background-color: grey;
+}
+
+.job-printing{
+	background-color: #ffc107;
+}
+.job-finished{
+	background-color: #b1dfbb;
+}
+.job-default{
+	background-color: white;
+}
+
+.badge-info {
+	 color: black;
+	background-color: #efefef;
 }

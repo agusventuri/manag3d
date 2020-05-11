@@ -10,7 +10,7 @@ import Paho from 'paho-mqtt';
 import './itemDashboard.css';
 import PrinterInformation from './itemDashboard.js';
 import icon3d from './impresion.svg'
-
+import PendingJobs from "./PendingTable.js";
 
 function onConnect() {
  console.log("onConnect josue");
@@ -24,7 +24,7 @@ function onConnectionLost(responseObject) {
 }
 
 var mqttCli=new Paho.Client("ws://localhost:9001/mqtt", "myCLientId" + new Date().getTime())
-var subscription="prueba";
+var subscription="dashboard/printer";
 mqttCli.connect({ onSuccess: onConnect})
 mqttCli.onConnectionLost = onConnectionLost;
 
@@ -103,24 +103,49 @@ class ManagerMQTT extends Component{
         return null
       }
     return(
-        <div>
-          <table id="tableroDashboard" className="table table-responsive">
-              <thead>
-              <tr>
-                  <th colspan="2" className="headerImpresora">Impresoras</th>
-                  <th colspan="10" rowSpan="2" className="trabajos">Trabajos</th>
-              </tr>
-                <tr >
-                  <th className="titLeft">Nombre</th>
-                  <th className="titCenter">Estado</th>
-                </tr>
-              </thead>
-              {<tbody className="bodyDashboard"><PrinterInformation printer={this.state.impresora}/></tbody>}
-            </table>
-        </div>
+        <div className="row flex-xl-nowrap">
+          <div className="col-md-10 col-xl-10" >
+              <div className="divPrincipal">
+                  <table id="tableroDashboard" className="table">
+                      <thead>
+                      <tr>
+                          <th colSpan="2" className="headerImpresora">Impresoras</th>
+                          <th colSpan="10" rowSpan="2" className="trabajos">Trabajos</th>
+                      </tr>
+                      <tr>
+                          <th className="titLeft">Nombre</th>
+                          <th className="titCenter">Estado</th>
+                      </tr>
+                      </thead>
+                      {
+                          <tbody className="bodyDashboard">
+                          <PrinterInformation printer={this.state.impresora}/>
+                          </tbody>
+                      }
+                  </table>
+              </div>
+          </div>
+          <div className="col-md-2 col-xl-2 principalPendiente" >
+              <div className="divPendientes">
+                  <table id="tableroPendientes" className="table">
+                      <thead>
+                          <tr>
+                              <th className="titLeft">Pendientes</th>
+                          </tr>
+                      </thead>
+                      {
+                          <tbody className="bodyDashboard">
+                            <PendingJobs printer={this.state.impresora}/>
+                          </tbody>
+                      }
+                  </table>
+              </div>
+          </div>
+       </div>
     )
   }
 }
+
 
 class Dashboard extends Component {
 
@@ -138,15 +163,8 @@ class Dashboard extends Component {
             <div className="titDashboard">
                 <h1 >Tablero sobre estado de las impresoras </h1>
             </div>
-            <div class="row flex-xl-nowrap">
-                <div className="col-md-1 col-xl-1" >
-                </div>
-                <div className="col-md-8 col-xl-8" >
-                    <ManagerMQTT mqttCli={mqttCli} suscription={subscription}/>
-                </div>
-                <div className="col-md-3 col-xl-3" >
-                </div>
-            </div>
+            <ManagerMQTT mqttCli={mqttCli} suscription={subscription}/>
+
       </div>    
       );
   }
