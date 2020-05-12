@@ -42,7 +42,7 @@ def validate_integer(integ,min,max):
 def load_names(sql,tipo):
     accept=False
     while accept==False:
-        print('Ingrese nombre del '+tipo+':')
+        print('Ingrese '+tipo+' del trabajo:')
         name=input()
         if validate_names(name)==True:
             accept=True
@@ -100,10 +100,10 @@ def load_job(cursor,sql,times):
                                                     str(sql['cliente'])+"',"+ \
                                                     str(sql['orden'])+","+ \
                                                     str(sql['tiempo_estimado'])+ ")"
-    print(insert)
     cursor.execute(insert)
     cursor.execute("SELECT * from impresiones") #executes the query to the database.
 
+    print('Estos son los trabajos cargados:')
     #print query result
     for row in cursor:
         print(row)
