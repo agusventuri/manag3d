@@ -42,6 +42,9 @@ class Printer:
 
         self.jobs.append(Job(row, print_time, print_time_left, completion))
 
+    def add_pending_job(self):
+        pass
+
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id):
         self.timestamp = timestamp
         job = self.jobs[-1]
