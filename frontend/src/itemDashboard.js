@@ -17,11 +17,11 @@ class PrinterInformation extends Component{
 	}
 
 	jobStateSwitch(param) {
-		if(param == 0){
+		if(param === 0){
 			return 'job-pending';
 		}else if(param >0 && param < 100){
 			return 'job-printing';
-		}else if(param == 100) {
+		}else if(param === 100) {
 			return 'job-finished';
 		}else{
 			return 'job-default';

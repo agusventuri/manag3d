@@ -83,7 +83,7 @@ class PrinterObserver:
 topics = {
     "topic_progress": "printer/+/progress/#",
     "topic_events": "printer/+/events/#",
-    "topic_dispatch": "prueba"
+    "topic_dispatch": "dashboard/printer"
     }
 po = PrinterObserver("192.168.0.174", topics)
 state = None

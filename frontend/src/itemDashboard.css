@@ -29,7 +29,7 @@
 }
 .trabajos{
 	vertical-align: middle !important;
-	min-width: 600px;
+	min-width: 800px;
 	font-size: 25px;
 }
 /*
@@ -89,7 +89,7 @@
 }
 
 .jobsTd{
-	width: 170px;
+	width: 100px;
 	padding: 8px 5px !important;
 }
 
