@@ -37,14 +37,16 @@ class PrinterObserver:
 
             printer_data_state = printer_data["state"]
             pds_text = printer_data_state["text"]
-        else:
-            pass
-            # pdp_completion = 0
-            # pdp_print_time = 0
-            # pdp_print_time_left = 0
-            # pds_text = parsed_message["_event"]
 
-        self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
+            self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, False)
+
+        elif topic_split[2] == self.topic_events_split[2]:
+            pdp_completion = 0
+            pdp_print_time = 0
+            pdp_print_time_left = 0
+            pds_text = parsed_message["_event"]
+
+            self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, True)
 
         schedule.run_pending()
 
@@ -65,7 +67,7 @@ class PrinterObserver:
 
         # subscribing to topics
         client.subscribe(consts.TOPIC_PROGRESS)
-        # client.subscribe(consts.TOPIC_EVENTS)
+        client.subscribe(consts.TOPIC_EVENTS)
 
         schedule.every(10).seconds.do(self.check_pending_jobs)
 
@@ -102,13 +104,13 @@ class PrinterObserver:
         return self.printers
 
     def update_printer(self, client,
-                       printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id):
+                       printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, event):
         printer = self.printers.get(printer_id)
         if printer is None:
             printer = Printer(printer_id,
                               timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
             self.printers[printer_id] = printer
-        printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
+        printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, event)
         # print(str(printer))
         self.dispatch_mqtt_update(client, printer_id)
 

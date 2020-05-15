@@ -38,6 +38,8 @@ TOPIC_DISPATCH_PENDING = "dashboard/jobs"
 
 EVENT_PRINT_CANCELLED = "PrintCancelled"
 EVENT_PRINT_CANCELLING = "PrintCancelling"
+EVENT_PRINT_FAILED = "PrintFailed"
+EVENT_PRINT_STARTED = "PrintStarted"
 
 PROGRESS_FINISHING = "Finishing"
 PROGRESS_OPERATIONAL = "Operational"

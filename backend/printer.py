@@ -51,10 +51,11 @@ class Printer:
         self.pending_jobs.append(job)
         self.pending_jobs = deque(sorted(self.pending_jobs, key=lambda x: x.order))
 
-    def update(self, timestamp, completion, print_time_left, print_time, text, job_id):
+    def update(self, timestamp, completion, print_time_left, print_time, text, job_id, event):
         self.timestamp = timestamp
         last_job = self.jobs[-1]
 
+        print(text)
         if text == consts.PROGRESS_FINISHING:
             self.state = consts.PRINTER_IDLE
             last_job.finish(timestamp)
@@ -66,9 +67,10 @@ class Printer:
         # if str(last_job.id) != job_id:
         #     self.add_job(job_id, print_time, print_time_left, completion)
         # else:
-        if completion < last_job.completion and text == consts.PROGRESS_STARTING:
-            if last_job.completion < 100:
-                last_job.cancel(timestamp)
+        if event and (text == consts.EVENT_PRINT_CANCELLED or text == consts.EVENT_PRINT_FAILED):
+            last_job.cancel(timestamp)
+
+        if text == consts.EVENT_PRINT_STARTED:
             self.add_job(job_id, print_time, print_time_left, completion)
         else:
             if text == consts.PROGRESS_PRINTING:
