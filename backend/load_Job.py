@@ -16,7 +16,8 @@ def new_input():
     print("Por favor, ingrese nuevamente")
 
 def validate_names(name):
-    if name.isalpha()==False:
+    cp=name.replace(" ","")
+    if cp.isalpha()==False:
         print('El nombre debe ser una cadena de texto')
         return False
     if len(name)>50 :
@@ -90,16 +91,18 @@ def load_printer(sql):
 
 
 def load_job(cursor,sql,times):
-    tiempo_estimado=(3600*int(times['hours'])+60*int(times['minutes'])+int(times['seconds']))*1000 #milisegundos
+    tiempo_estimado=3600*int(times['hours'])+60*int(times['minutes'])+int(times['seconds']) #segundos
     sql['tiempo_estimado']=tiempo_estimado
     fields = (str(list(sql.keys()))[1:-1])
     values = (str(list(sql.values()))[1:-1])
     #insert = 'insert into impresiones ('+fields+') VALUES (' + values + ')'
-    insert="insert into impresiones (nombre,id_impresora,cliente,orden,tiempo_estimado) VALUES (' "+str(sql['nombre'])+"',"+ \
-                                                    str(sql['id_impresora'])+",'"+ \
+    insert="insert into impresiones (nombre,id_impresora,estado,cliente,orden,tiempo_estimado) VALUES ('"+str(sql['nombre'])+"',"+ \
+                                                    str(sql['id_impresora'])+","+\
+                                                    str(1)                    +",'"+ \
                                                     str(sql['cliente'])+"',"+ \
                                                     str(sql['orden'])+","+ \
                                                     str(sql['tiempo_estimado'])+ ")"
+    print(insert)
     cursor.execute(insert)
     cursor.execute("SELECT * from impresiones") #executes the query to the database.
 
@@ -115,6 +118,7 @@ def main(cursor):
     sql={
         'nombre':None,
         'id_impresora':'NULL',
+        'estado':1,
         'cliente':None,
         'orden':'NULL',
         'tiempo_estimado':None,

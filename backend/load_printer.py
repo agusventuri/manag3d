@@ -16,7 +16,8 @@ def new_input():
     print("Por favor, ingrese nuevamente")
 
 def validate_names(name):
-    if name.isalnum()==False:
+    cp=name.replace(" ","")
+    if cp.isalnum()==False:
         print('El nombre debe ser un valor alfanumérico')
         return False
     if len(name)>50 :
