@@ -1,18 +1,21 @@
 import json
 import time
 import paho.mqtt.client as mqtt
-
+import schedule
+import pymysql
+import backend.constants as consts
 from backend.printer import Printer
+from backend.job import Job
 
 
 class PrinterObserver:
 
-    def __init__(self, broker, topics_dict):
-        self.TOPICS = topics_dict
-        self.topic_progress_split = self.TOPICS["topic_progress"].split("/")
-        self.topic_events_split = self.TOPICS["topic_events"].split("/")
+    def __init__(self, broker,):
+        self.topic_progress_split = consts.TOPIC_PROGRESS.split("/")
+        self.topic_events_split = consts.TOPIC_EVENTS.split("/")
         self.broker = broker
         self.printers = {}
+        self.pending_jobs = {}
         self.nro = 0
         self.observe()
 
@@ -35,14 +38,15 @@ class PrinterObserver:
             printer_data_state = printer_data["state"]
             pds_text = printer_data_state["text"]
         else:
-            pdp_completion = 0
-            pdp_print_time = 0
-            pdp_print_time_left = 0
-            pds_text = parsed_message["_event"]
-
-        print(parsed_message)
+            pass
+            # pdp_completion = 0
+            # pdp_print_time = 0
+            # pdp_print_time_left = 0
+            # pds_text = parsed_message["_event"]
 
         self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
+
+        schedule.run_pending()
 
     def on_disconnect(self, client, userdata, rc=0):
         print("Disconnected result code "+str(rc))
@@ -60,8 +64,39 @@ class PrinterObserver:
         client.loop_start()
 
         # subscribing to topics
-        client.subscribe(self.TOPICS["topic_progress"])
-        client.subscribe(self.TOPICS["topic_events"])
+        client.subscribe(consts.TOPIC_PROGRESS)
+        # client.subscribe(consts.TOPIC_EVENTS)
+
+        schedule.every(10).seconds.do(self.check_pending_jobs)
+
+    def check_pending_jobs(self):
+
+        conn = pymysql.connect(host=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        cursor = conn.cursor()  # connection pointer to the database.
+        cursor.execute("SELECT * from impresiones WHERE estado=1")
+        row = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        for j in row:
+            j_id = j[0]
+            j_id_printer = j[3]
+            # j_state = j[4]
+            # j_customer = j[5]
+            # j_fecha_inicio = j[6]
+            # j_fecha_fin = j[7]
+            # j_order = j[8]
+            # j_estimated = j[9]
+            # j_filepath_stl = j[10]
+            # j_filepath_gcode = j[11]
+
+            if j_id_printer is None:
+                if self.pending_jobs.get(str(j_id)) is None:
+                    self.pending_jobs[str(j_id)] = Job(j, 0, 0, 0)
+            else:
+                self.printers[str(j_id_printer)].add_pending_job(Job(j, 0, 0, 0))
+
+        self.dispatch_pending_jobs()
 
     def get_state(self):
         return self.printers
@@ -74,20 +109,29 @@ class PrinterObserver:
                               timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
             self.printers[printer_id] = printer
         printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
-        print(str(printer))
+        # print(str(printer))
         self.dispatch_mqtt_update(client, printer_id)
 
     def dispatch_mqtt_update(self, client, printer_id):
         dump = "[" + json.dumps(self.printers[printer_id].jsonify()) + "]"
-        client.publish(self.TOPICS["topic_dispatch"], dump)
+        client.publish(consts.TOPIC_DISPATCH_PRINTERS, dump)
+
+    def dispatch_pending_jobs(self):
+        dump = "["
+        for job in self.pending_jobs.values():
+            if len(dump) == 1:
+                dump += json.dumps(job.jsonify())
+            else:
+                dump += ", " + json.dumps(job.jsonify())
+
+        client = mqtt.Client("jobs_observer")
+        client.connect(self.broker)
+        client.loop_start()
+        client.publish(consts.TOPIC_DISPATCH_PENDING, dump)
+        client.loop_stop()
 
 
-topics = {
-    "topic_progress": "printer/+/progress/#",
-    "topic_events": "printer/+/event/#",
-    "topic_dispatch": "prueba"
-    }
-po = PrinterObserver("192.168.0.3", topics)
+po = PrinterObserver("192.168.0.3")
 state = None
 while True:
     pass

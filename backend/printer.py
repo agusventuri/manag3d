@@ -30,6 +30,7 @@ class Printer:
             self.z = row[0][4]
 
         self.jobs = deque()
+        self.pending_jobs = deque()
         self.add_job(job_id, pdp_print_time, pdp_print_time_left, pdp_completion)
 
     def add_job(self, job_id, print_time, print_time_left, completion):
@@ -42,31 +43,41 @@ class Printer:
 
         self.jobs.append(Job(row, print_time, print_time_left, completion))
 
+    def add_pending_job(self, job):
+        for j in self.pending_jobs:
+            if job.id == j.id:
+                return None
+
+        self.pending_jobs.append(job)
+        self.pending_jobs = deque(sorted(self.pending_jobs, key=lambda x: x.order))
+
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id):
         self.timestamp = timestamp
-        job = self.jobs[-1]
+        last_job = self.jobs[-1]
 
-        if text == "Finishing":
+        if text == consts.PROGRESS_FINISHING:
             self.state = consts.PRINTER_IDLE
-            job.finish(timestamp)
-        elif text == "Operational":
+            last_job.finish(timestamp)
+        elif text == consts.PROGRESS_OPERATIONAL:
             self.state = consts.PRINTER_IDLE
-        elif text == "Starting":
+        elif text == consts.PROGRESS_STARTING:
             self.state = consts.PRINTER_HEATING
 
-        if str(job.id) != job_id:
+        # if str(last_job.id) != job_id:
+        #     self.add_job(job_id, print_time, print_time_left, completion)
+        # else:
+        if completion < last_job.completion and text == consts.PROGRESS_STARTING:
+            if last_job.completion < 100:
+                last_job.cancel(timestamp)
             self.add_job(job_id, print_time, print_time_left, completion)
         else:
-            if completion < job.completion and text == "PrintStarted":
-                self.add_job(job_id, print_time, print_time_left, completion)
-            else:
-                if text == "Printing":
-                    self.state = consts.PRINTER_PRINTING
-                    job.start(timestamp)
-                elif text == "PrintCancelled" or text == "PrintCancelling":
-                    self.state = consts.PRINTER_CHECK
-                    job.cancel(timestamp)
-                job.update(print_time, print_time_left, completion)
+            if text == consts.PROGRESS_PRINTING:
+                self.state = consts.PRINTER_PRINTING
+                last_job.start(timestamp)
+            elif text == consts.EVENT_PRINT_CANCELLED or text == consts.EVENT_PRINT_CANCELLING:
+                self.state = consts.PRINTER_CHECK
+                last_job.cancel(timestamp)
+            last_job.update(print_time, print_time_left, completion)
 
     def __str__(self):
         text = "Printer " + self.name
@@ -78,8 +89,11 @@ class Printer:
         return text
 
     def jsonify(self):
+        jobs_copy = self.jobs.copy()
+        pending_jobs_copy = self.pending_jobs.copy()
+        jobs_copy.extend(pending_jobs_copy)
         jobs = []
-        for job in self.jobs:
+        for job in jobs_copy:
             jobs.append(job.jsonify())
         return {
             "printer_id": self.id,
