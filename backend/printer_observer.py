@@ -130,7 +130,6 @@ class PrinterObserver:
         client.publish(consts.TOPIC_DISPATCH_PENDING, dump)
         client.loop_stop()
 
-
 po = PrinterObserver("192.168.0.3")
 state = None
 while True:
