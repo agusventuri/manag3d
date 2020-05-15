@@ -135,17 +135,30 @@
 	margin: 38px 0px;
 	font-size: 21px;
 }
-
-.impresora-printing{
-	background-color: #c3e6cb;
+/*impresora colores */
+.impresora-printing{ /* imprimiendo*/
+	background-color: rgb(87, 217, 163);
 }
 
-.impresora-idle{
-	background-color: white;
+.impresora-idle{ /*en espera*/
+	background-color: rgb(244, 245, 247);
 }
+
+.impresora-calentando{ /*en calentando*/
+	background-color: rgb(87, 217, 163);
+}
+
+.impresora-revisar{ /*Revisar impresora*/
+	background-color: rgb(255, 143, 115);
+}
+
+.impresora-conectada{ /*Conectada*/
+	background-color: rgb(244, 245, 247);
+}
+
 
 .impresora-default{
-	background-color: red;
+	background-color: white;
 }
 /*estados jobs */
 .job-pending{
@@ -158,6 +171,10 @@
 .job-finished{
 	background-color: #b1dfbb;
 }
+.job-cancelled{
+	background-color: #ffc107;
+}
+
 .job-default{
 	background-color: white;
 }

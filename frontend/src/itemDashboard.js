@@ -11,6 +11,12 @@ class PrinterInformation extends Component{
 				return 'impresora-printing';
 			case 'Idle':
 				return 'impresora-idle';
+			case 'Starting':
+				return 'impresora-calentando';
+			case 'error':
+				return 'impresora-revisar';
+			case 'Connected':
+				return 'impresora-conectada';
 			default:
 				return 'impresora-default';
 		}
