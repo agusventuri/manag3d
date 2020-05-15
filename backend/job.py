@@ -13,6 +13,7 @@ class Job:
         self.print_time_left = print_time_left
         self.start_time = 0
         self.finish_time = 0
+        self.order = row[8]
         self.file = File(self.id, row[1], row[9], row[10], row[11])
 
     def start(self, start_time):

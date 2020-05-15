@@ -10,10 +10,9 @@ from backend.job import Job
 
 class PrinterObserver:
 
-    def __init__(self, broker, topics_dict):
-        self.TOPICS = topics_dict
-        self.topic_progress_split = self.TOPICS["topic_progress"].split("/")
-        self.topic_events_split = self.TOPICS["topic_events"].split("/")
+    def __init__(self, broker,):
+        self.topic_progress_split = consts.TOPIC_PROGRESS.split("/")
+        self.topic_events_split = consts.TOPIC_EVENTS.split("/")
         self.broker = broker
         self.printers = {}
         self.pending_jobs = {}
@@ -39,10 +38,13 @@ class PrinterObserver:
             printer_data_state = printer_data["state"]
             pds_text = printer_data_state["text"]
         else:
-            pdp_completion = 0
-            pdp_print_time = 0
-            pdp_print_time_left = 0
-            pds_text = parsed_message["_event"]
+            pass
+            #pdp_completion = 0
+            #pdp_print_time = 0
+            #pdp_print_time_left = 0
+            #pds_text = parsed_message["_event"]
+
+        print("---" + topic_split[2])
 
         self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
 
@@ -64,8 +66,8 @@ class PrinterObserver:
         client.loop_start()
 
         # subscribing to topics
-        client.subscribe(self.TOPICS["topic_progress"])
-        client.subscribe(self.TOPICS["topic_events"])
+        client.subscribe(consts.TOPIC_PROGRESS)
+        # client.subscribe(consts.TOPIC_EVENTS)
 
         schedule.every(10).seconds.do(self.check_pending_jobs)
 
@@ -93,7 +95,6 @@ class PrinterObserver:
             if j_id_printer is None:
                 if self.pending_jobs.get(str(j_id)) is None:
                     self.pending_jobs[str(j_id)] = Job(j, 0, 0, 0)
-                    print("creado pending job")
             else:
                 self.printers[str(j_id_printer)].add_pending_job(Job(j, 0, 0, 0))
 
@@ -110,12 +111,12 @@ class PrinterObserver:
                               timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
             self.printers[printer_id] = printer
         printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
-        #print(str(printer))
+        # print(str(printer))
         self.dispatch_mqtt_update(client, printer_id)
 
     def dispatch_mqtt_update(self, client, printer_id):
         dump = "[" + json.dumps(self.printers[printer_id].jsonify()) + "]"
-        client.publish(self.TOPICS["topic_dispatch"], dump)
+        client.publish(consts.TOPIC_DISPATCH_PRINTERS, dump)
 
     def dispatch_pending_jobs(self):
         dump = "["
@@ -128,18 +129,11 @@ class PrinterObserver:
         client = mqtt.Client("jobs_observer")
         client.connect(self.broker)
         client.loop_start()
-        client.publish(self.TOPICS["topic_dispatch_pending"], dump)
+        client.publish(consts.TOPIC_DISPATCH_PENDING, dump)
         client.loop_stop()
 
 
-
-topics = {
-    "topic_progress": "printer/+/progress/#",
-    "topic_events": "printer/+/event/#",
-    "topic_dispatch": "prueba",
-    "topic_dispatch_pending": "pending"
-    }
-po = PrinterObserver("192.168.0.3", topics)
+po = PrinterObserver("192.168.0.3")
 state = None
 while True:
     pass
