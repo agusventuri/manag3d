@@ -67,6 +67,8 @@ class Printer:
         #     self.add_job(job_id, print_time, print_time_left, completion)
         # else:
         if completion < last_job.completion and text == consts.PROGRESS_STARTING:
+            if last_job.completion < 100:
+                last_job.cancel(timestamp)
             self.add_job(job_id, print_time, print_time_left, completion)
         else:
             if text == consts.PROGRESS_PRINTING:
