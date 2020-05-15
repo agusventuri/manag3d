@@ -50,31 +50,29 @@ class Printer:
 
         self.pending_jobs.append(job)
         self.pending_jobs = deque(sorted(self.pending_jobs, key=lambda x: x.order))
-        print("----------------------------")
-        print(self.pending_jobs)
 
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id):
         self.timestamp = timestamp
         last_job = self.jobs[-1]
 
-        if text == "Finishing":
+        if text == consts.PROGRESS_FINISHING:
             self.state = consts.PRINTER_IDLE
             last_job.finish(timestamp)
-        elif text == "Operational":
+        elif text == consts.PROGRESS_OPERATIONAL:
             self.state = consts.PRINTER_IDLE
-        elif text == "Starting":
+        elif text == consts.PROGRESS_STARTING:
             self.state = consts.PRINTER_HEATING
 
         # if str(last_job.id) != job_id:
         #     self.add_job(job_id, print_time, print_time_left, completion)
         # else:
-        if completion < last_job.completion and text == "Starting":
+        if completion < last_job.completion and text == consts.PROGRESS_STARTING:
             self.add_job(job_id, print_time, print_time_left, completion)
         else:
-            if text == "Printing":
+            if text == consts.PROGRESS_PRINTING:
                 self.state = consts.PRINTER_PRINTING
                 last_job.start(timestamp)
-            elif text == "PrintCancelled" or text == "PrintCancelling":
+            elif text == consts.EVENT_PRINT_CANCELLED or text == consts.EVENT_PRINT_CANCELLING:
                 self.state = consts.PRINTER_CHECK
                 last_job.cancel(timestamp)
             last_job.update(print_time, print_time_left, completion)

@@ -39,12 +39,10 @@ class PrinterObserver:
             pds_text = printer_data_state["text"]
         else:
             pass
-            #pdp_completion = 0
-            #pdp_print_time = 0
-            #pdp_print_time_left = 0
-            #pds_text = parsed_message["_event"]
-
-        print("---" + topic_split[2])
+            # pdp_completion = 0
+            # pdp_print_time = 0
+            # pdp_print_time_left = 0
+            # pds_text = parsed_message["_event"]
 
         self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
 
@@ -83,14 +81,14 @@ class PrinterObserver:
         for j in row:
             j_id = j[0]
             j_id_printer = j[3]
-            j_state = j[4]
-            j_customer = j[5]
-            j_fecha_inicio = j[6]
-            j_fecha_fin = j[7]
-            j_order = j[8]
-            j_estimated = j[9]
-            j_filepath_stl = j[10]
-            j_filepath_gcode = j[11]
+            # j_state = j[4]
+            # j_customer = j[5]
+            # j_fecha_inicio = j[6]
+            # j_fecha_fin = j[7]
+            # j_order = j[8]
+            # j_estimated = j[9]
+            # j_filepath_stl = j[10]
+            # j_filepath_gcode = j[11]
 
             if j_id_printer is None:
                 if self.pending_jobs.get(str(j_id)) is None:

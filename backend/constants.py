@@ -35,3 +35,11 @@ TOPIC_PROGRESS = "printer/+/progress/#"
 TOPIC_EVENTS = "printer/+/event/#"
 TOPIC_DISPATCH_PRINTERS = "dashboard/printers"
 TOPIC_DISPATCH_PENDING = "dashboard/jobs"
+
+EVENT_PRINT_CANCELLED = "PrintCancelled"
+EVENT_PRINT_CANCELLING = "PrintCancelling"
+
+PROGRESS_FINISHING = "Finishing"
+PROGRESS_OPERATIONAL = "Operational"
+PROGRESS_STARTING = "Starting"
+PROGRESS_PRINTING = "Printing"
