@@ -1,20 +1,17 @@
 from backend.job import Job
 import pymysql
-
-db_host = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com"    # server
-db_user = "ufi5pvu38rgxyyki"  		                                # user
-db_passwd = "wDA27vy9GAK4UVepDOHx"		                            # user password
-db_name = "bxgiympztcdyk1mlijne"		                            # database name
+from collections import deque
+import backend.constants as consts
 
 
 class Printer:
 
     def __init__(self, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id):
-        self.text = pds_text
         self.id = printer_id
+        self.state = consts.PRINTER_CONNECTED
         self.timestamp = timestamp
 
-        conn = pymysql.connect(host=db_host, user=db_user, passwd=db_passwd, db=db_name)
+        conn = pymysql.connect(host=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * from impresoras WHERE id_impresora=" + self.id)
         row = cursor.fetchall()
@@ -32,54 +29,76 @@ class Printer:
             self.y = row[0][3]
             self.z = row[0][4]
 
-        self.jobs = {}
+        self.jobs = deque()
+        self.pending_jobs = deque()
         self.add_job(job_id, pdp_print_time, pdp_print_time_left, pdp_completion)
 
     def add_job(self, job_id, print_time, print_time_left, completion):
-        conn = pymysql.connect(host=db_host, user=db_user, passwd=db_passwd, db=db_name)
+        conn = pymysql.connect(host=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * FROM impresiones WHERE id=" + job_id)
         row = cursor.fetchone()
         cursor.close()
         conn.close()
 
-        self.jobs[str(row[0])] = Job(row, print_time, print_time_left, completion)
+        self.jobs.append(Job(row, print_time, print_time_left, completion))
+
+    def add_pending_job(self, job):
+        for j in self.pending_jobs:
+            if job.id == j.id:
+                return None
+
+        self.pending_jobs.append(job)
+        self.pending_jobs = deque(sorted(self.pending_jobs, key=lambda x: x.order))
 
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id):
         self.timestamp = timestamp
-        self.text = text
-        job = self.jobs.get(job_id)
+        last_job = self.jobs[-1]
 
-        if text == "Finishing":
-            self.text = "Idle"
-            job.set_finish_time(timestamp)
-        elif text == "Operational":
-            self.text = "Idle"
+        if text == consts.PROGRESS_FINISHING:
+            self.state = consts.PRINTER_IDLE
+            last_job.finish(timestamp)
+        elif text == consts.PROGRESS_OPERATIONAL:
+            self.state = consts.PRINTER_IDLE
+        elif text == consts.PROGRESS_STARTING:
+            self.state = consts.PRINTER_HEATING
 
-        if job is None:
+        # if str(last_job.id) != job_id:
+        #     self.add_job(job_id, print_time, print_time_left, completion)
+        # else:
+        if completion < last_job.completion and text == consts.PROGRESS_STARTING:
+            if last_job.completion < 100:
+                last_job.cancel(timestamp)
             self.add_job(job_id, print_time, print_time_left, completion)
         else:
-            if text == "Printing":
-                job.set_start_time(timestamp)
-            job.update(print_time, print_time_left, completion)
+            if text == consts.PROGRESS_PRINTING:
+                self.state = consts.PRINTER_PRINTING
+                last_job.start(timestamp)
+            elif text == consts.EVENT_PRINT_CANCELLED or text == consts.EVENT_PRINT_CANCELLING:
+                self.state = consts.PRINTER_CHECK
+                last_job.cancel(timestamp)
+            last_job.update(print_time, print_time_left, completion)
 
     def __str__(self):
         text = "Printer " + self.name
         text += "\n\tTimestamp: \t" + str(self.timestamp)
-        text += "\n\tState: \t\t" + self.text
-        for key, value in self.jobs.items():
-            text += str(value)
+        text += "\n\tState: \t\t" + consts.PRINTER_STRS.get(str(self.state))
+        for job in self.jobs:
+            text += str(job)
         text += "\n--------------------------------------------------------"
         return text
 
     def jsonify(self):
+        jobs_copy = self.jobs.copy()
+        pending_jobs_copy = self.pending_jobs.copy()
+        jobs_copy.extend(pending_jobs_copy)
         jobs = []
-        for key, value in self.jobs.items():
-            jobs.append(value.jsonify())
+        for job in jobs_copy:
+            jobs.append(job.jsonify())
         return {
             "printer_id": self.id,
             "printer_name": self.name,
-            "printer_state": self.text,
+            "printer_state": consts.PRINTER_STRS.get(str(self.state)),
             "jobs": jobs
         }
 

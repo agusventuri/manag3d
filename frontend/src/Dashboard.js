@@ -35,6 +35,7 @@ function onConnectionLostPending(responseObject) {
 
 var mqttCli=new Paho.Client("ws://localhost:9001/mqtt", "myCLientId" + new Date().getTime())
 var subscription="dashboard/printer";
+
 mqttCli.connect({ onSuccess: onConnect})
 mqttCli.onConnectionLost = onConnectionLost;
 
@@ -52,6 +53,7 @@ class ManagerMQTT extends Component{
     "printer_state": "",
     "jobs": [
       {
+        "job_state":"",
         "start_time":0,         //fecha
         "finish_time": 0,       //fecha
         "completion": 0,
@@ -105,14 +107,15 @@ class ManagerMQTT extends Component{
         var estado= this.state.impresora
         //this.setState({impresora: (this.state.impresora).unshift( JSON.stringify( JSON.parse(message.payloadString)[0] ) ) })
         estado.push(JSON.parse(message.payloadString)[0])
-        this.setState({estado})
+        this.setState({estado});
      }
+
+     console.log('ESTA EN DASH: '+estaEnDash)
 
 }
 
   componentDidMount() {
      this.props.mqttCli.onMessageArrived = this.onMessageArrived;
-     console.log("se ejecuto didmount")
   }
   render(){
       if(this.state.impresora[0].printer_id===0){
@@ -200,7 +203,6 @@ class ManagerMQTTPendientes extends Component{
     }
 }
 class Dashboard extends Component {
-
     handlePagClick = (pag) => {
       return this.props.history.push(pag);
   }
