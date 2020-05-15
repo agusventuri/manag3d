@@ -43,13 +43,13 @@ function GetFinishTime(finish_time,print_time_left,diff,completion,job_state){
 	if(!finish_time){
 		//Hago esta comparacion porque el finish time depende de print_time left
 		if(completion >59){
-			return <p>Finish time: {FormatFinishTime(print_time_left,job_state)}</p>
+			return <div>{FormatFinishTime(print_time_left,job_state)}</div>
 		}else{
-			return <p>Finish time: {FormatFinishTime(diff,job_state)}</p>
+			return <div>{FormatFinishTime(diff,job_state)}</div>
 			}
 	}else{
 		//hay un finish_time, por lo tanto solo lo mostramos
-		return <p>Finish time: {FormatIntToDateTime(finish_time)}</p>
+		return <div>{FormatIntToDateTime(finish_time)}</div>
 		}
 }
 

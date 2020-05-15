@@ -7,15 +7,15 @@ class PrinterInformation extends Component{
 
 	printerStateSwitch(param) {
 		switch(param) {
-			case 'Printing':
+			case 'Imprimiendo':
 				return 'impresora-printing';
-			case 'Idle':
+			case 'En espera':
 				return 'impresora-idle';
-			case 'Starting':
+			case 'Calentando':
 				return 'impresora-calentando';
-			case 'error':
+			case 'Revisar impresora':
 				return 'impresora-revisar';
-			case 'Connected':
+			case 'Conectada':
 				return 'impresora-conectada';
 			default:
 				return 'impresora-default';
@@ -23,14 +23,17 @@ class PrinterInformation extends Component{
 	}
 
 	jobStateSwitch(param) {
-		if(param === 0){
-			return 'job-pending';
-		}else if(param >0 && param < 100){
-			return 'job-printing';
-		}else if(param === 100) {
-			return 'job-finished';
-		}else{
-			return 'job-default';
+		switch(param) {
+			case 'Cargando':
+				return 'job-pending';
+			case 'Imprimiendo':
+				return 'job-printing';
+			case 'Finalizado':
+				return 'job-finished';
+			case 'Cancelado':
+				return 'job-cancelled';
+			default:
+				return 'job-default';
 		}
 	}
 
@@ -68,14 +71,14 @@ class PrinterInformation extends Component{
 								<div className="card text-dark bg-light">
 									<div className="card-body ">
 										<div className="list-group">
-											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].completion)}>
+											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].job_state)}>
 												Fecha de inicio
 												<br />
                         <span className="badge badge-info badge-pill">
                             {FormatIntToDateTime(printer[currency].jobs[jobcurrency].start_time)}
                         </span>
 											</div>
-											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].completion)}>
+											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].job_state)}>
 												Fecha de finalizacion
 												<br />
                         <span className="badge badge-info badge-pill"> 

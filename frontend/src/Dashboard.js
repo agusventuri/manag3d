@@ -33,13 +33,13 @@ function onConnectionLostPending(responseObject) {
     }
 }
 
-var mqttCli=new Paho.Client("ws://localhost:9001/mqtt", "myCLientId" + new Date().getTime())
-var subscription="dashboard/printer";
+var mqttCli=new Paho.Client("ws://192.168.0.3:9001/mqtt", "myCLientId" + new Date().getTime())
+var subscription="dashboard/printers";
 
 mqttCli.connect({ onSuccess: onConnect})
 mqttCli.onConnectionLost = onConnectionLost;
 
-var mqttCliJobs=new Paho.Client("ws://localhost:9001/mqtt", "myCLientId2" + new Date().getTime())
+var mqttCliJobs=new Paho.Client("ws://192.168.0.3:9001/mqtt", "myCLientId2" + new Date().getTime())
 var subscriptionJobs="dashboard/jobs";
 mqttCliJobs.connect({ onSuccess: onConnectPending})
 mqttCliJobs.onConnectionLost = onConnectionLostPending;

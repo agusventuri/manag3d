@@ -94,23 +94,21 @@
 }
 
 .pendientesTd .card.text-dark.bg-light{
-	width: 200px;
+	width: 100%;
 }
 
 .jobsTd .card.text-dark.bg-light {
-	width: 140px;
+	width: 200px;
 }
 
 .divPrincipal{
 	background-color: #f8f9fa!important;
-	height: 500px;
 	overflow: auto;
 }
 
 .divPendientes {
 	background-color: #f8f9fa!important;
 	overflow: auto;
-	height: 500px;
 }
 
 .principalPendiente{
@@ -160,19 +158,31 @@
 .impresora-default{
 	background-color: white;
 }
+/*
+case 'Cargando':
+			   return 'job-pending';
+case 'Imprimiendo':
+				  return 'job-printing';
+case 'Finalizado':
+				 return 'job-finished';
+case 'Cancelado':
+				return 'job-cancelled';
+default:
+return 'job-default';
+*/
 /*estados jobs */
 .job-pending{
-	background-color: grey;
+	background-color: #c6c6c6;
 }
 
 .job-printing{
-	background-color: #ffc107;
+	background-color: #4eff05;
 }
 .job-finished{
-	background-color: #b1dfbb;
+	background-color: #a3eab1;
 }
 .job-cancelled{
-	background-color: #ffc107;
+	background-color: #ea6565;
 }
 
 .job-default{

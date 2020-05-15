@@ -79,7 +79,6 @@ class PrinterObserver:
         row = cursor.fetchall()
         cursor.close()
         conn.close()
-
         for j in row:
             j_id = j[0]
             j_id_printer = j[3]
@@ -93,12 +92,12 @@ class PrinterObserver:
             # j_filepath_gcode = j[11]
 
             if j_id_printer is None:
+                print(self.pending_jobs)
                 if self.pending_jobs.get(str(j_id)) is None:
                     self.pending_jobs[str(j_id)] = Job(j, 0, 0, 0)
+                    self.dispatch_pending_jobs()
             else:
                 self.printers[str(j_id_printer)].add_pending_job(Job(j, 0, 0, 0))
-
-        self.dispatch_pending_jobs()
 
     def get_state(self):
         return self.printers
