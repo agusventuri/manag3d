@@ -12,14 +12,19 @@ import PrinterInformation from './itemDashboard.js';
 import icon3d from './impresion.svg'
 import PendingJobs from "./PendingTable.js";
 
+
 function onConnect() {
  console.log("onConnect josue");
  mqttCli.subscribe(subscription);
+    //mando mensaje para solicitar informacion del dash
+    mqttCli.send(subscription,"Give me Dash Info");
 }
 
 function onConnectPending() {
     console.log("onConnect josue");
     mqttCliJobs.subscribe(subscriptionJobs);
+    //mando mensaje para solicitar informacion del dash, tabla pendientes
+    mqttCliJobs.send(subscriptionJobs,"Give me Dash pending Info");
 }
 function onConnectionLost(responseObject) {
   if (responseObject.errorCode !== 0) {
@@ -33,13 +38,13 @@ function onConnectionLostPending(responseObject) {
     }
 }
 
-var mqttCli=new Paho.Client("ws://192.168.0.3:9001/mqtt", "myCLientId" + new Date().getTime())
+var mqttCli=new Paho.Client("ws://192.168.1.18:9001/mqtt", "myCLientId" + new Date().getTime())
 var subscription="dashboard/printers";
 
 mqttCli.connect({ onSuccess: onConnect})
 mqttCli.onConnectionLost = onConnectionLost;
 
-var mqttCliJobs=new Paho.Client("ws://192.168.0.3:9001/mqtt", "myCLientId2" + new Date().getTime())
+var mqttCliJobs=new Paho.Client("ws://192.168.1.18:9001/mqtt", "myCLientId2" + new Date().getTime())
 var subscriptionJobs="dashboard/jobs";
 mqttCliJobs.connect({ onSuccess: onConnectPending})
 mqttCliJobs.onConnectionLost = onConnectionLostPending;
@@ -155,7 +160,7 @@ class ManagerMQTTPendientes extends Component{
     }]}
 
     onMessageArrived = message => {
-        debugger;
+        //debugger;
         //aca agregamos las impresoras nuevas al dashboard
         var estaEnDash = false;
 
@@ -182,7 +187,7 @@ class ManagerMQTTPendientes extends Component{
        // if(this.state.jobs[0].job_id===0){
           //  return null
         //}
-        debugger;
+        //debugger;
         return(
             <div className="divPendientes">
                 <table id="tableroPendientes" className="table">
