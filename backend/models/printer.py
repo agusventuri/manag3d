@@ -1,7 +1,7 @@
-from backend.job import Job
 import pymysql
 from collections import deque
-import backend.constants as consts
+import models.constants as consts
+from models.job import Job
 
 
 class Printer:

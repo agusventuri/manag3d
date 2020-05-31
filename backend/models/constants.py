@@ -30,11 +30,11 @@ DB_USER = "ufi5pvu38rgxyyki"  		                                # user
 DB_PASS = "wDA27vy9GAK4UVepDOHx"		                            # user password
 DB_NAME = "bxgiympztcdyk1mlijne"		                            # database name
 
-
 TOPIC_PROGRESS = "printer/+/progress/#"
 TOPIC_EVENTS = "printer/+/event/#"
 TOPIC_DISPATCH_PRINTERS = "dashboard/printers"
 TOPIC_DISPATCH_PENDING = "dashboard/jobs"
+TOPIC_STARTUP = "startup"
 
 EVENT_PRINT_CANCELLED = "PrintCancelled"
 EVENT_PRINT_CANCELLING = "PrintCancelling"
