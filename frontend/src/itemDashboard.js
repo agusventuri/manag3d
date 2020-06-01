@@ -1,9 +1,50 @@
 import React,{Component} from 'react';
 import './App.css';
 import './itemDashboard.css'
+import axios from "axios";
 import {FormatIntToDateTime,FormatIntToTime,GetFinishTime} from './FormatDateTime.js';
+import {CONSTS} from "./constants";
+
+class SendUpdate extends Component{
+	state={message:""}
+	sendUpdateJob=(printer,job)=>{
+		axios.put(CONSTS.host + '/updateJobPrinter/',
+			{
+				printer:printer,
+				job:job
+			}
+		//).then(()=>{this.setState({message:"success"})}
+		).then(()=>{alert("Se ha quitado la impresión pendiente con éxito, estamos actualizando la página, por favor espere un momento")})
+		.catch(()=>{alert("Ocurrió un error durante la actualización, intente en un momento")})
+		//).catch(()=>{this.setState({message:"error"})})
+	}
+	//"Ocurrió un error durante la actualización, intente en un momento"
+	//Se ha quitado la impresión pendiente con éxito, estamos actualizando la página, por favor espere un momento"
+	componentWillReceiveProps(nextProps, nextContext) {
+		if(nextProps.printer!==0 && nextProps.job!==0){
+			this.sendUpdateJob(nextProps.printer,nextProps.job)
+		}
+	}
+
+	render(){
+		return null
+			{/*<div>
+				{(this.state.message!=="")
+					? 	<div className="alert alert-primary alert-dismissible fade show">
+							<strong>{this.state.message}</strong> This is a simple primary alert box.
+							<button type="button" className="close" data-dismiss="alert">&times;</button>
+						</div>
+					:
+					null
+				}
+			</div>*/}
+		//)
+	}
+}
 
 class PrinterInformation extends Component{
+
+	state={printer:0,job:0}
 
 	printerStateSwitch(param) {
 		switch(param) {
@@ -66,13 +107,21 @@ class PrinterInformation extends Component{
 								</div>
 							</div>
 						</td>
+
 						{Object.keys(printer[currency].jobs).map(jobcurrency =>
 							<td key={jobcurrency} className="jobsTd">
+								{<SendUpdate
+									printer={this.state.printer}
+									job={this.state.job}
+								/>}
 								<div className="card text-dark bg-light">
 									<div className="card-body ">
 										<div className="list-group">
+
 											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].job_state)}>
 												Fecha de inicio
+
+												{<button className="close" onClick={()=>this.setState({printer:1,job:2})}>x</button>}
 												<br />
                         <span className="badge badge-info badge-pill">
                             {FormatIntToDateTime(printer[currency].jobs[jobcurrency].start_time)}
@@ -130,8 +179,16 @@ class PrinterInformation extends Component{
 				)
 	}
 	render(){
-		return(this._renderPrinters())
+		return(
+			this._renderPrinters()
+
+		)
 
 	}
 }
+
 export default PrinterInformation
+{/*<SendUpdate
+					printer={this.state.printer}
+					job={this.state.job}
+				/>*/}
