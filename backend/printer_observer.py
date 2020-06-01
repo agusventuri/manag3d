@@ -145,7 +145,7 @@ class PrinterObserver:
         self.dispatch_pending_jobs()
 
 
-po = PrinterObserver("192.168.0.3")
+po = PrinterObserver("192.168.1.18")
 state = None
 while True:
     pass

@@ -17,10 +17,15 @@ class App extends Component {
        <BrowserRouter>
         <div className="container-fluid">
 {/*          <NavBar />*/}
-          <Redirect
+			{/*<Redirect
             from="/"
-            to="/App.js" />
+            to="/App.js" />*/}
           <Switch>
+			<Route
+				exact
+				path="/"
+				component={Inicio}  />
+
             <Route
               path="/App.js"
               component={Inicio} />

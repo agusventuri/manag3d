@@ -12,16 +12,12 @@ import PrinterInformation from './itemDashboard.js';
 import icon3d from './impresion.svg'
 import PendingJobs from "./PendingTable.js";
 
-
 function onConnect() {
-    console.log("dahsboard connected");
     mqttCli.subscribe(subscription);
 }
 
 function onConnectPending() {
-    console.log("pending jobs connected");
     mqttCliJobs.subscribe(subscriptionJobs);
-    //mando mensaje para solicitar informacion del dash
     mqttCliJobs.send(subscriptionStartup,"first connection");
 }
 
@@ -37,20 +33,13 @@ function onConnectionLostPending(responseObject) {
     }
 }
 
-var host = "ws://192.168.0.3:9001/mqtt"
+var host = "ws://192.168.1.18:9001/mqtt"
 var subscription="dashboard/printers";
 var subscriptionJobs="dashboard/jobs";
 var subscriptionStartup="startup"
 
-
 var mqttCli=new Paho.Client(host, "myCLientId" + new Date().getTime())
-mqttCli.connect({ onSuccess: onConnect})
-mqttCli.onConnectionLost = onConnectionLost;
-
 var mqttCliJobs=new Paho.Client(host, "myCLientId2" + new Date().getTime())
-mqttCliJobs.connect({ onSuccess: onConnectPending})
-mqttCliJobs.onConnectionLost = onConnectionLostPending;
-
 
 class ManagerMQTT extends Component{
 
@@ -77,9 +66,6 @@ class ManagerMQTT extends Component{
     }
 
     onMessageArrived = message => {
-        //esto pisa el state
-        //this.setState({impresora: JSON.parse(message.payloadString)});
-        console.log(message.payloadString)
         if (message.payloadString === "first connection"){
             return;
         }
@@ -120,14 +106,14 @@ class ManagerMQTT extends Component{
             estado.push(JSON.parse(message.payloadString)[0])
             this.setState({estado});
         }
-
-        console.log('ESTA EN DASH: '+estaEnDash)
-
     }
 
     componentDidMount() {
+        this.props.mqttCli.connect({ onSuccess: onConnect})
+        this.props.mqttCli.onConnectionLost = onConnectionLost;
         this.props.mqttCli.onMessageArrived = this.onMessageArrived;
     }
+
     render(){
         if(this.state.impresora[0].printer_id===0){
             return null
@@ -192,14 +178,12 @@ class ManagerMQTTPendientes extends Component{
     }
 
     componentDidMount() {
+        this.props.mqttCliJobs.connect({ onSuccess: onConnectPending})
+        this.props.mqttCliJobs.onConnectionLost = onConnectionLostPending;
         this.props.mqttCliJobs.onMessageArrived = this.onMessageArrived;
-        console.log("se ejecuto didmount jobs pendientes")
-    }
+        }
+
     render(){
-        // if(this.state.jobs[0].job_id===0){
-        //  return null
-        //}
-        //debugger;
         return(
             <div className="divPendientes">
                 <table id="tableroPendientes" className="table">
@@ -219,6 +203,8 @@ class ManagerMQTTPendientes extends Component{
         )
     }
 }
+
+
 class Dashboard extends Component {
     handlePagClick = (pag) => {
         return this.props.history.push(pag);
@@ -226,11 +212,6 @@ class Dashboard extends Component {
     render(){
         return (
             <div className="Dashboard">
-                {/* <header className="App-header">
-              </header>*/}
-                {/* <div>
-              <button onClick={() => this.handlePagClick('./App.js')}>Inicio</button>
-            </div>*/}
                 <div className="titDashboard">
                     <h1 >Tablero sobre estado de las impresoras </h1>
                 </div>
