@@ -1,5 +1,5 @@
-from backend.file import File
-import backend.constants as consts
+from models.file import File
+import models.constants as consts
 
 
 class Job:
