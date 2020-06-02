@@ -117,6 +117,7 @@ class PrinterObserver:
         printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, event)
         # print(str(printer))
         self.dispatch_mqtt_update(client, printer)
+        self.dispatch_pending_jobs()
 
     def dispatch_mqtt_update(self, client, printer):
         dump = "[" + json.dumps(printer.jsonify()) + "]"

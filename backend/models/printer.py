@@ -34,6 +34,12 @@ class Printer:
         self.add_job(job_id, pdp_print_time, pdp_print_time_left, pdp_completion)
 
     def add_job(self, job_id, print_time, print_time_left, completion):
+        for job in self.pending_jobs:
+            if str(job_id) == str(job.id):
+                self.pending_jobs.remove(job)
+                self.jobs.append(job)
+                return None
+
         conn = pymysql.connect(host=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * FROM impresiones WHERE id=" + job_id)
