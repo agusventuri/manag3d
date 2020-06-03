@@ -64,6 +64,7 @@ class ManagerMQTT extends Component{
         if (message.payloadString === "first connection"){
             return;
         }
+        this.props.sendPrinters(JSON.parse(message.payloadString)[0])
 
         //actualizamos estados de impresoras que ya están en el dashboard
         this.setState({impresora:  Object.keys(this.state.impresora).map( imp => {
@@ -71,6 +72,7 @@ class ManagerMQTT extends Component{
                     // console.log("esto comp el if: "+this.state.impresora[imp].printer_id+" "+JSON.parse(message.payloadString)[0].printer_id)
                     if (this.state.impresora[imp].printer_id===0){
                         return (JSON.parse(message.payloadString)[0])
+
                     }else{
                         if(this.state.impresora[imp].printer_id===JSON.parse(message.payloadString)[0].printer_id){
                             return (JSON.parse(message.payloadString)[0])
@@ -151,26 +153,28 @@ class ManagerMQTTPendientes extends Component{
         //debugger;
         //aca agregamos las impresoras nuevas al dashboard
         console.log(message.payloadString)
+        console.log("LLEGO PENDENTEEEEEEEEEE")
 
         if (message.payloadString === "first connection"){
             return;
         }
 
-        var estaEnDash = false;
+        var estaEnState = false;
 
         Object.keys(this.state.jobs).forEach(key => {
             //console.log("esto compara "+this.state.impresora[key].printer_id+"  "+JSON.parse(message.payloadString)[0].printer_id)
             if (this.state.jobs[key].job_id === JSON.parse(message.payloadString)[0].job_id) {//esta comparacion esta ok
-                estaEnDash = true;
+                estaEnState = true;
             }
         });
-        if (estaEnDash === false) {
+        if (estaEnState === false) {
             //si es un trabajo  que no esta en el dashboard, la agrego al state
             var estado = this.state.jobs
             //this.setState({impresora: (this.state.impresora).unshift( JSON.stringify( JSON.parse(message.payloadString)[0] ) ) })
             estado.push(JSON.parse(message.payloadString)[0])
             this.setState({estado})
         }
+        console.log()
     }
 
     componentDidMount() {
@@ -191,7 +195,7 @@ class ManagerMQTTPendientes extends Component{
                     <tbody className="bodyDashboard">
                     {this.state.jobs.length === 1
                         ? <tr><td className="pendientesTd">No existen pendientes</td></tr>
-                        : <PendingJobs printer={this.state.jobs}/>
+                        : <PendingJobs jobs={this.statedf.jobs} printers={this.props.printers}/>
                     }
                     </tbody>
                 </table>
@@ -202,8 +206,56 @@ class ManagerMQTTPendientes extends Component{
 
 
 class Dashboard extends Component {
+    state={impresora:[{
+            "printer_id": 0,
+            "printer_name": "",
+            "printer_state": "",
+            "jobs": [
+                {
+                    "job_state":"",
+                    "start_time":0,         //fecha
+                    "finish_time": 0,       //fecha
+                    "completion": 0,
+                    "print_time": 0,        //hhmmss
+                    "print_time_left":0,    //hhmmss
+                    "customer":"",
+                    "file": {
+                        "id":0,
+                        "name":"",
+                        "estimated_time":0    //hhmmss
+                    }
+                }]
+        }]
+    }
     handlePagClick = (pag) => {
         return this.props.history.push(pag);
+    }
+
+    //recibo impresoras desde mqtt manage para pasarselas a mqttPending
+    _receivePrinters=(printer)=> {
+        this.setState({
+                impresora: Object.keys(this.state.impresora).map(imp => {
+                        // console.log("imp: "+this.state.impresora[imp].printer_id)
+                        // console.log("esto comp el if: "+this.state.impresora[imp].printer_id+" "+JSON.parse(message.payloadString)[0].printer_id)
+                        if (this.state.impresora[imp].printer_id === 0) {
+                            return (printer)
+
+                        } else {
+                            if (this.state.impresora[imp].printer_id === printer.printer_id) {
+                                return (printer)
+                            } else {
+
+                                //return JSON.parse( (this.state.impresora).push( JSON.parse(message.payloadString)[0] ) )
+                                return this.state.impresora[imp]
+                            }
+                        }
+
+                    }
+                )
+            }
+        )
+        console.log("state dashboard")
+        console.log(this.state.impresora)
     }
     render(){
         return (
@@ -213,10 +265,10 @@ class Dashboard extends Component {
                 </div>
                 <div className="row flex-xl-nowrap">
                     <div className="col-md-10 col-xl-10" >
-                        <ManagerMQTT mqttCli={mqttCli} suscription={subscription}/>
+                        <ManagerMQTT mqttCli={mqttCli} suscription={subscription} sendPrinters={this._receivePrinters}/>
                     </div>
                     <div className="col-md-2 col-xl-2 principalPendiente" >
-                        <ManagerMQTTPendientes mqttCliJobs={mqttCliJobs} suscription={subscriptionJobs}/>
+                        <ManagerMQTTPendientes mqttCliJobs={mqttCliJobs} suscription={subscriptionJobs} printers={this.state.impresora}/>
                     </div>
                 </div>
             </div>
