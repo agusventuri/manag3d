@@ -120,8 +120,10 @@ class PrinterInformation extends Component{
 
 											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].job_state)}>
 												Fecha de inicio
-
-												{<button className="close" onClick={()=>this.setState({printer:1,job:2})}>x</button>}
+												{printer[currency].jobs[jobcurrency].job_state===0
+												?<button className="close" onClick={()=>this.setState({printer:printer[currency].printer_id,job:printer[currency].jobs[jobcurrency].file.id})}>x</button>
+												:null
+												}
 												<br />
                         <span className="badge badge-info badge-pill">
                             {FormatIntToDateTime(printer[currency].jobs[jobcurrency].start_time)}
