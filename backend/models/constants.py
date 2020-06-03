@@ -25,10 +25,15 @@ PRINTER_STRS = {
     "4": "Conectada"
 }
 
-DB_HOST = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com"    # server
-DB_USER = "ufi5pvu38rgxyyki"  		                                # user
-DB_PASS = "wDA27vy9GAK4UVepDOHx"		                            # user password
-DB_NAME = "bxgiympztcdyk1mlijne"		                            # database name
+# DB_HOST = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com"    # server
+# DB_USER = "ufi5pvu38rgxyyki"  		                                # user
+# DB_PASS = "wDA27vy9GAK4UVepDOHx"		                            # user password
+# DB_NAME = "bxgiympztcdyk1mlijne"		                            # database name
+
+DB_HOST = "/var/run/mysqld/mysqld.sock"             # server
+DB_USER = "tesis"  		                            # user
+DB_PASS = "TesisPrint3d"                            # user password
+DB_NAME = "manag3d"		                            # database name
 
 TOPIC_PROGRESS = "printer/+/progress/#"
 TOPIC_EVENTS = "printer/+/event/#"

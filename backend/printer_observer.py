@@ -78,7 +78,7 @@ class PrinterObserver:
 
     def check_pending_jobs(self):
 
-        conn = pymysql.connect(host=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * from impresiones WHERE estado=1")
         row = cursor.fetchall()
@@ -132,7 +132,7 @@ class PrinterObserver:
                 dump += ", " + json.dumps(job.jsonify())
 
         if dump == "[":
-            return None
+            dump = "[{}]"
 
         client = mqtt.Client("jobs_observer")
         client.connect(self.broker)
