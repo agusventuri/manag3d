@@ -1,19 +1,13 @@
 import React,{Component} from 'react';
-import ReactDOM from 'react-dom';
-// import {browserHistory} from 'react-router'
-import {BrowserRouter,Switch,Route,Redirect,Link} from 'react-router-dom'
-import Moment from 'react-moment';
-// import NavBar from './NavBar/NavBar';
-import logo from './logo.svg';
 import './App.css';
 import Paho from 'paho-mqtt';
 import './itemDashboard.css';
 import PrinterInformation from './itemDashboard.js';
-import icon3d from './impresion.svg'
 import PendingJobs from "./PendingTable.js";
 
 function onConnect() {
     mqttCli.subscribe(subscription);
+    console.log("conectado")
 }
 
 function onConnectPending() {
@@ -66,6 +60,7 @@ class ManagerMQTT extends Component{
     }
 
     onMessageArrived = message => {
+        console.log("on message arrive")
         if (message.payloadString === "first connection"){
             return;
         }
@@ -112,6 +107,7 @@ class ManagerMQTT extends Component{
         this.props.mqttCli.connect({ onSuccess: onConnect})
         this.props.mqttCli.onConnectionLost = onConnectionLost;
         this.props.mqttCli.onMessageArrived = this.onMessageArrived;
+        console.log("ejecuto did mount")
     }
 
     render(){

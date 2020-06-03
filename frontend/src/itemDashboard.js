@@ -80,9 +80,8 @@ class PrinterInformation extends Component{
 
 	_renderPrinters(){
 		const {printer}=this.props;
-		// console.log(printer);
-		// console.log("este es el estado"+printer.printer_state);
-		// console.log("este es el moment", new Date(1587752299*1000))
+		 console.log("este es el estado"+printer.printer_state);
+		 console.log("este es el moment", new Date(1587752299*1000))
 		return Object.keys(printer).map(currency =>( //cada CURRENCY es el indice de la impresora en el JSON(0,1,2..)
 					<tr key={currency}> 
 						<td className="stateTd">
@@ -91,6 +90,10 @@ class PrinterInformation extends Component{
 									<div className="list-group">
 										<div className="list-group-item align-items-center list-group-item-action list-group-item-primary">
 											<div>{printer[currency].printer_name}</div>
+											<SendUpdate
+												printer={this.state.printer}
+												job={this.state.job}
+											/>
 										</div>
 									</div>
 								</div>
@@ -110,10 +113,7 @@ class PrinterInformation extends Component{
 
 						{Object.keys(printer[currency].jobs).map(jobcurrency =>
 							<td key={jobcurrency} className="jobsTd">
-								{<SendUpdate
-									printer={this.state.printer}
-									job={this.state.job}
-								/>}
+
 								<div className="card text-dark bg-light">
 									<div className="card-body ">
 										<div className="list-group">
