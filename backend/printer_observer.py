@@ -77,7 +77,6 @@ class PrinterObserver:
         schedule.every(10).seconds.do(self.check_pending_jobs)
 
     def check_pending_jobs(self):
-
         conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
         # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
         cursor = conn.cursor()  # connection pointer to the database.

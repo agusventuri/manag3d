@@ -2,12 +2,14 @@ JOB_LOADING = 0
 JOB_PRINTING = 1
 JOB_FINISHED = 2
 JOB_CANCELLED = 3
+JOB_QUEUED = 4
 
 JOB_STRS = {
     "0": "Cargando",
     "1": "Imprimiendo",
     "2": "Finalizado",
-    "3": "Cancelado"
+    "3": "Cancelado",
+    "4": "Encolado"
 }
 
 
