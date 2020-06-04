@@ -11,7 +11,6 @@ class Jobs:
             user = "ufi5pvu38rgxyyki",		# user
             passwd = "wDA27vy9GAK4UVepDOHx",		# user password
             db = "bxgiympztcdyk1mlijne")		# database name
-        print("1")
         cursor = conn.cursor()  #connection pointer to the database.
         if impresora == 0:
             update="update impresiones set id_impresora = NULL where id="+ str(id) + ""
