@@ -85,7 +85,7 @@ class PrinterInformation extends Component{
 										<div className="list-group">
 											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].job_state)}>
 												Fecha de inicio
-												{printer[currency].jobs[jobcurrency].job_state==="4"
+												{printer[currency].jobs[jobcurrency].job_state==="Encolado"
 												?<button className="close" onClick={()=>this._handleClick(printer[currency].printer_id,printer[currency].jobs[jobcurrency].file.id)}>x</button>
 												:null
 												}
