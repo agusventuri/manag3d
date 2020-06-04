@@ -28,17 +28,6 @@ class SendUpdate extends Component{
 
 	render(){
 		return null
-			{/*<div>
-				{(this.state.message!=="")
-					? 	<div className="alert alert-primary alert-dismissible fade show">
-							<strong>{this.state.message}</strong> This is a simple primary alert box.
-							<button type="button" className="close" data-dismiss="alert">&times;</button>
-						</div>
-					:
-					null
-				}
-			</div>*/}
-		//)
 	}
 }
 

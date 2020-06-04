@@ -153,7 +153,6 @@ class ManagerMQTTPendientes extends Component{
         //debugger;
         //aca agregamos las impresoras nuevas al dashboard
         console.log(message.payloadString)
-        console.log("LLEGO PENDENTEEEEEEEEEE")
 
         if (message.payloadString === "first connection"){
             return;
@@ -163,7 +162,15 @@ class ManagerMQTTPendientes extends Component{
 
         Object.keys(this.state.jobs).forEach(key => {
             //console.log("esto compara "+this.state.impresora[key].printer_id+"  "+JSON.parse(message.payloadString)[0].printer_id)
-            if (this.state.jobs[key].job_id === JSON.parse(message.payloadString)[0].job_id) {//esta comparacion esta ok
+            //si es el primero, reemlplaza al por defecto
+            if (this.state.jobs[key].job_id===0){
+                console.log("job id es 0")
+                console.log(JSON.parse(message.payloadString)[0])
+                this.setState({jobs:[JSON.parse(message.payloadString)[0]]})
+                console.log("STATEEE "+this.state)
+                console.log(this.state.jobs)
+            }
+                if (this.state.jobs[key].job_id === JSON.parse(message.payloadString)[0].job_id) {//esta comparacion esta ok
                 estaEnState = true;
             }
         });
@@ -193,9 +200,9 @@ class ManagerMQTTPendientes extends Component{
                     </tr>
                     </thead>
                     <tbody className="bodyDashboard">
-                    {this.state.jobs.length === 1
+                    {this.state.jobs[0].job_id ===0
                         ? <tr><td className="pendientesTd">No existen pendientes</td></tr>
-                        : <PendingJobs jobs={this.statedf.jobs} printers={this.props.printers}/>
+                        : <PendingJobs jobs={this.state.jobs} printers={this.props.printers}/>
                     }
                     </tbody>
                 </table>
