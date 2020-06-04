@@ -5,29 +5,17 @@ import axios from "axios";
 import {FormatIntToDateTime,FormatIntToTime,GetFinishTime} from './FormatDateTime.js';
 import {CONSTS} from "./constants";
 
-class SendUpdate extends Component{
-	sendUpdateJob=(printer,job)=>{
+class PrinterInformation extends Component{
+
+	_handleClick=(printer,job)=>{
 		axios.put(CONSTS.host + '/updateJobPrinter/',
 			{
 				printer:printer,
 				job:job
 			}
 		).then(()=>{alert("Se ha quitado la impresión pendiente con éxito, estamos actualizando la página, por favor espere un momento")})
-		.catch(()=>{alert("Ocurrió un error durante la actualización, intente en un momento")})
+			.catch(()=>{alert("Ocurrió un error durante la actualización, intente en un momento"+printer+job)})
 	}
-	componentWillReceiveProps(nextProps, nextContext) {
-		if(nextProps.printer!==0 && nextProps.job!==0){
-			this.sendUpdateJob(nextProps.printer,nextProps.job)
-		}
-	}
-
-	render(){
-		return null
-	}
-}
-
-class PrinterInformation extends Component{
-	state={printer:0,job:0}
 
 	printerStateSwitch(param) {
 		switch(param) {
@@ -73,10 +61,6 @@ class PrinterInformation extends Component{
 									<div className="list-group">
 										<div className="list-group-item align-items-center list-group-item-action list-group-item-primary">
 											<div>{printer[currency].printer_name}</div>
-											<SendUpdate
-												printer={this.state.printer}
-												job={this.state.job}
-											/>
 										</div>
 									</div>
 								</div>
@@ -96,15 +80,13 @@ class PrinterInformation extends Component{
 
 						{Object.keys(printer[currency].jobs).map(jobcurrency =>
 							<td key={jobcurrency} className="jobsTd">
-
 								<div className="card text-dark bg-light">
 									<div className="card-body ">
 										<div className="list-group">
-
 											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].job_state)}>
 												Fecha de inicio
-												{printer[currency].jobs[jobcurrency].job_state===0
-												?<button className="close" onClick={()=>this.setState({printer:printer[currency].printer_id,job:printer[currency].jobs[jobcurrency].file.id})}>x</button>
+												{printer[currency].jobs[jobcurrency].job_state==="4"
+												?<button className="close" onClick={()=>this._handleClick(printer[currency].printer_id,printer[currency].jobs[jobcurrency].file.id)}>x</button>
 												:null
 												}
 												<br />
