@@ -8,7 +8,7 @@ import {CONSTS} from "./constants";
 class PrinterInformation extends Component{
 
 	_handleClick=(printer,job)=>{
-		axios.put(CONSTS.host + '/updateJobPrinter/',
+		axios.put(CONSTS.host + '/updateJobPrinter/'+job+'/'+printer,
 			{
 				printer:printer,
 				job:job

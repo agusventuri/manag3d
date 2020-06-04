@@ -9,7 +9,7 @@ import DropdownItem from "react-bootstrap/DropdownItem";
 class PendingJobs extends Component{
     _handleClick=(printer,job)=>{
         console.log("job handle: "+job)
-        axios.put(CONSTS.host + '/asignJobToPrinter/',
+        axios.put(CONSTS.host + '/updateJobPrinter/'+job+'/',
             {
                 printer:printer,
                 job:job
