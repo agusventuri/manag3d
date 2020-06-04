@@ -6,20 +6,15 @@ import {FormatIntToDateTime,FormatIntToTime,GetFinishTime} from './FormatDateTim
 import {CONSTS} from "./constants";
 
 class SendUpdate extends Component{
-	state={message:""}
 	sendUpdateJob=(printer,job)=>{
 		axios.put(CONSTS.host + '/updateJobPrinter/',
 			{
 				printer:printer,
 				job:job
 			}
-		//).then(()=>{this.setState({message:"success"})}
 		).then(()=>{alert("Se ha quitado la impresión pendiente con éxito, estamos actualizando la página, por favor espere un momento")})
 		.catch(()=>{alert("Ocurrió un error durante la actualización, intente en un momento")})
-		//).catch(()=>{this.setState({message:"error"})})
 	}
-	//"Ocurrió un error durante la actualización, intente en un momento"
-	//Se ha quitado la impresión pendiente con éxito, estamos actualizando la página, por favor espere un momento"
 	componentWillReceiveProps(nextProps, nextContext) {
 		if(nextProps.printer!==0 && nextProps.job!==0){
 			this.sendUpdateJob(nextProps.printer,nextProps.job)
@@ -32,7 +27,6 @@ class SendUpdate extends Component{
 }
 
 class PrinterInformation extends Component{
-
 	state={printer:0,job:0}
 
 	printerStateSwitch(param) {

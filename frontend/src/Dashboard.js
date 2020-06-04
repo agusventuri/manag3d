@@ -150,7 +150,6 @@ class ManagerMQTTPendientes extends Component{
         }]}
 
     onMessageArrived = message => {
-        //debugger;
         //aca agregamos las impresoras nuevas al dashboard
         console.log(message.payloadString)
 
