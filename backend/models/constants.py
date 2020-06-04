@@ -25,10 +25,10 @@ PRINTER_STRS = {
     "4": "Conectada"
 }
 
-# DB_HOST = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com"    # server
-# DB_USER = "ufi5pvu38rgxyyki"  		                                # user
-# DB_PASS = "wDA27vy9GAK4UVepDOHx"		                            # user password
-# DB_NAME = "bxgiympztcdyk1mlijne"		                            # database name
+DB_HOST_REMOTE = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com"    # server
+DB_USER_REMOTE = "ufi5pvu38rgxyyki"  		                                # user
+DB_PASS_REMOTE = "wDA27vy9GAK4UVepDOHx"		                            # user password
+DB_NAME_REMOTE = "bxgiympztcdyk1mlijne"		                            # database name
 
 DB_HOST = "/var/run/mysqld/mysqld.sock"             # server
 DB_USER = "tesis"  		                            # user
