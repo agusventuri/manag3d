@@ -33,7 +33,7 @@ function onConnectionLostPending(responseObject) {
     }
 }
 
-var host = "ws://192.168.1.18:9001/mqtt"
+var host = "ws://192.168.0.3:9001/mqtt"
 var subscription="dashboard/printers";
 var subscriptionJobs="dashboard/jobs";
 var subscriptionStartup="startup"
