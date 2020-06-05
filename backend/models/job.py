@@ -61,6 +61,7 @@ class Job:
 
     def jsonify(self):
         return {
+            "job_id": str(self.id),
             "job_state": consts.JOB_STRS.get(str(self.state)),
             "start_time": self.start_time,
             "finish_time": self.finish_time,
