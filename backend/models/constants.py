@@ -2,12 +2,14 @@ JOB_LOADING = 0
 JOB_PRINTING = 1
 JOB_FINISHED = 2
 JOB_CANCELLED = 3
+JOB_QUEUED = 4
 
 JOB_STRS = {
     "0": "Cargando",
     "1": "Imprimiendo",
     "2": "Finalizado",
-    "3": "Cancelado"
+    "3": "Cancelado",
+    "4": "Encolado"
 }
 
 
@@ -25,10 +27,15 @@ PRINTER_STRS = {
     "4": "Conectada"
 }
 
-DB_HOST = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com"    # server
-DB_USER = "ufi5pvu38rgxyyki"  		                                # user
-DB_PASS = "wDA27vy9GAK4UVepDOHx"		                            # user password
-DB_NAME = "bxgiympztcdyk1mlijne"		                            # database name
+DB_HOST_REMOTE = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com"    # server
+DB_USER_REMOTE = "ufi5pvu38rgxyyki"  		                                # user
+DB_PASS_REMOTE = "wDA27vy9GAK4UVepDOHx"		                            # user password
+DB_NAME_REMOTE = "bxgiympztcdyk1mlijne"		                            # database name
+
+DB_HOST = "/var/run/mysqld/mysqld.sock"             # server
+DB_USER = "tesis"  		                            # user
+DB_PASS = "TesisPrint3d"                            # user password
+DB_NAME = "manag3d"		                            # database name
 
 TOPIC_PROGRESS = "printer/+/progress/#"
 TOPIC_EVENTS = "printer/+/event/#"

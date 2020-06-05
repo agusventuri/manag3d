@@ -77,8 +77,8 @@ class PrinterObserver:
         schedule.every(10).seconds.do(self.check_pending_jobs)
 
     def check_pending_jobs(self):
-
-        conn = pymysql.connect(host=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * from impresiones WHERE estado=1")
         row = cursor.fetchall()
@@ -117,6 +117,7 @@ class PrinterObserver:
         printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, event)
         # print(str(printer))
         self.dispatch_mqtt_update(client, printer)
+        self.dispatch_pending_jobs()
 
     def dispatch_mqtt_update(self, client, printer):
         dump = "[" + json.dumps(printer.jsonify()) + "]"
@@ -131,7 +132,7 @@ class PrinterObserver:
                 dump += ", " + json.dumps(job.jsonify())
 
         if dump == "[":
-            return None
+            dump = "[{}]"
 
         client = mqtt.Client("jobs_observer")
         client.connect(self.broker)
