@@ -1,15 +1,13 @@
 from flask import Flask, render_template
-from backend.printer_observer import PrinterObserver
-from backend.models.updateJobs import Jobs
+from models.updateJobs import Jobs
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
-po = PrinterObserver("192.168.0.3", ["test"])
 
 @app.route("/")
 def index():
     return "Bienvenido a Manag3d"
 
-@app.route("/asignJobToPrinter/<idjob>", defaults={"idimpresora": 0})
-@app.route("/asignJobToPrinter/<idjob>/<idimpresora>" )
+@app.route("/updateJobPrinter/<idjob>", defaults={"idimpresora": 0})
+@app.route("/updateJobPrinter/<idjob>/<idimpresora>" )
 def asignar(idjob,idimpresora):
     msg = Jobs.update_jobs(idjob,idimpresora)
     return str(msg)

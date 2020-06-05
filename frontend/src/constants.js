@@ -1,3 +1,3 @@
 export const CONSTS = {
-    host: "http://localhost"
+    host: "http://localhost:5000"
 };
