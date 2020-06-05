@@ -27,7 +27,7 @@ function onConnectionLostPending(responseObject) {
     }
 }
 
-var host = "ws://192.168.1.18:9001/mqtt"
+var host = "ws://192.168.0.3:9001/mqtt"
 var subscription="dashboard/printers";
 var subscriptionJobs="dashboard/jobs";
 var subscriptionStartup="startup"
@@ -142,12 +142,23 @@ class ManagerMQTT extends Component{
 
 class ManagerMQTTPendientes extends Component{
 
-    state={jobs:[{
-            "job_id": 0,
-            "customer":"No hay",
-            "file_name":"No existe ninguno cargado",
-            "estimated_time":0
-        }]}
+    state={
+        jobs:[
+            {
+                "job_state":"",
+                "start_time":0,         //fecha
+                "finish_time": 0,       //fecha
+                "completion": 0,
+                "print_time": 0,        //hhmmss
+                "print_time_left":0,    //hhmmss
+                "customer":"",
+                "file": {
+                    "id":0,
+                    "name":"",
+                    "estimated_time":0    //hhmmss
+                }
+            }]
+    }
 
     onMessageArrived = message => {
         //aca agregamos las impresoras nuevas al dashboard

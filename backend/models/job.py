@@ -7,7 +7,10 @@ class Job:
     def __init__(self, row, print_time, print_time_left, completion):
         self.id = row[0]
         self.customer = row[5]
-        self.state = consts.JOB_LOADING
+        if print_time == 0 and print_time_left == 0 and completion == 0:
+            self.state = consts.JOB_QUEUED
+        else:
+            self.state = consts.JOB_LOADING
         self.completion = completion if completion is not None else 0
         self.print_time = print_time
         self.print_time_left = print_time_left
@@ -58,6 +61,7 @@ class Job:
 
     def jsonify(self):
         return {
+            "job_id": str(self.id),
             "job_state": consts.JOB_STRS.get(str(self.state)),
             "start_time": self.start_time,
             "finish_time": self.finish_time,

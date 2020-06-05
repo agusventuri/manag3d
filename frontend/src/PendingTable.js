@@ -27,17 +27,17 @@ class PendingJobs extends Component{
                                 <div className="list-group">
                                     <div className="list-group-item align-items-center list-group-item-action list-group-item-secondary">
                                         Cliente
-                                        <br /><span className="badge badge-info badge-pill">{jobs[currency].customer}</span>
+                                        <br /><span className="badge badge-info badge-pill">{printer[currency].customer}</span>
                                     </div>
                                     <div className="list-group-item align-items-center list-group-item-action list-group-item-secondary">
                                         Nombre de archivo
-                                        <br /><span className="badge badge-info badge-pill">{jobs[currency].file_name}</span>
+                                        <br /><span className="badge badge-info badge-pill">{printer[currency].file.name}</span>
                                     </div>
                                     <div className="list-group-item align-items-center list-group-item-action list-group-item-secondary">
                                         Tiempo estimado
-                                        <br /><span className="badge badge-info badge-pill">{ Math.floor(jobs[currency].estimated_time / 60 / 60) + "hs "
-                                        + (Math.floor(jobs[currency].estimated_time / 60) - Math.floor(jobs[currency].estimated_time/ 60 / 60) * 60) + "m "
-                                        + (jobs[currency].estimated_time % 60) + "s"}</span>
+                                        <br /><span className="badge badge-info badge-pill">{ Math.floor(printer[currency].file.estimated_time / 60 / 60) + "hs "
+                                        + (Math.floor(printer[currency].file.estimated_time / 60) - Math.floor(printer[currency].file.estimated_time/ 60 / 60) * 60) + "m "
+                                        + (printer[currency].file.estimated_time % 60) + "s"}</span>
                                     </div>
                                     <DropdownButton className="list-group-item align-items-center list-group-item-action list-group-item-secondary"
                                                     id="dropdown-basic-button"

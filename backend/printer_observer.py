@@ -14,7 +14,6 @@ class PrinterObserver:
         self.topic_events_split = consts.TOPIC_EVENTS.split("/")[2]
         self.broker = broker
         self.printers = {}
-        self.pending_jobs = {}
         self.nro = 0
         self.observe()
 
@@ -74,35 +73,20 @@ class PrinterObserver:
         client.subscribe(consts.TOPIC_EVENTS)
         client.subscribe(consts.TOPIC_STARTUP)
 
-        schedule.every(10).seconds.do(self.check_pending_jobs)
+        schedule.every(10).seconds.do(self.check_queued_jobs)
 
-    def check_pending_jobs(self):
-
-        conn = pymysql.connect(host=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+    def check_queued_jobs(self):
+        conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
         cursor = conn.cursor()  # connection pointer to the database.
-        cursor.execute("SELECT * from impresiones WHERE estado=1")
+        cursor.execute("SELECT * from impresiones WHERE estado=1 AND id_impresora IS NOT NULL;")
         row = cursor.fetchall()
         cursor.close()
         conn.close()
         for j in row:
-            j_id = j[0]
             j_id_printer = j[3]
-            # j_state = j[4]
-            # j_customer = j[5]
-            # j_fecha_inicio = j[6]
-            # j_fecha_fin = j[7]
-            # j_order = j[8]
-            # j_estimated = j[9]
-            # j_filepath_stl = j[10]
-            # j_filepath_gcode = j[11]
 
-            if j_id_printer is None:
-                print(self.pending_jobs)
-                if self.pending_jobs.get(str(j_id)) is None:
-                    self.pending_jobs[str(j_id)] = Job(j, 0, 0, 0)
-                    self.dispatch_pending_jobs()
-            else:
-                self.printers[str(j_id_printer)].add_pending_job(Job(j, 0, 0, 0))
+            self.printers[str(j_id_printer)].add_pending_job(Job(j, 0, 0, 0))
 
     def get_state(self):
         return self.printers
@@ -122,30 +106,12 @@ class PrinterObserver:
         dump = "[" + json.dumps(printer.jsonify()) + "]"
         client.publish(consts.TOPIC_DISPATCH_PRINTERS, dump)
 
-    def dispatch_pending_jobs(self):
-        dump = "["
-        for job in self.pending_jobs.values():
-            if len(dump) == 1:
-                dump += json.dumps(job.jsonify())
-            else:
-                dump += ", " + json.dumps(job.jsonify())
-
-        if dump == "[":
-            return None
-
-        client = mqtt.Client("jobs_observer")
-        client.connect(self.broker)
-        client.loop_start()
-        client.publish(consts.TOPIC_DISPATCH_PENDING, dump)
-        client.loop_stop()
-
     def dispatch_all(self, client):
         for printer in self.printers.values():
             self.dispatch_mqtt_update(client, printer)
-        self.dispatch_pending_jobs()
 
 
-po = PrinterObserver("192.168.1.18")
+po = PrinterObserver(consts.MQTT_HOST)
 state = None
 while True:
     pass
