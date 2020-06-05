@@ -59,13 +59,15 @@ class Printer:
 
         self.jobs.append(Job(row, print_time, print_time_left, completion))
 
-    def add_pending_job(self, job):
-        for j in self.pending_jobs:
-            if job.id == j.id:
-                return None
+    def add_pending_jobs(self, jobs):
+        self.pending_jobs = deque()
+        for job in jobs:
+            for j in self.pending_jobs:
+                if job.id == j.id:
+                    return None
 
-        self.pending_jobs.append(job)
-        self.pending_jobs = deque(sorted(self.pending_jobs, key=lambda x: x.order))
+            self.pending_jobs.append(job)
+            self.pending_jobs = deque(sorted(self.pending_jobs, key=lambda x: x.order))
 
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id, event):
         self.timestamp = timestamp

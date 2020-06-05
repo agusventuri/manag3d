@@ -1,26 +1,18 @@
 import pymysql
-
-class Jobs:
-    def update_jobs(id,impresora):
-        URL= "https://console.clever-cloud.com/"
-        User= "danielfpaz1@gmail.com"
-        passw="y6s.k9gVWAgHJUi"
-
-        conn = pymysql.connect(
-            host = "bxgiympztcdyk1mlijne-mysql.services.clever-cloud.com",  # server
-            user = "ufi5pvu38rgxyyki",		# user
-            passwd = "wDA27vy9GAK4UVepDOHx",		# user password
-            db = "bxgiympztcdyk1mlijne")		# database name
-        cursor = conn.cursor()  #connection pointer to the database.
-        if impresora == 0:
-            update="update impresiones set id_impresora = NULL where id="+ str(id) + ""
-        else:
-            update="update impresiones set id_impresora ="+ str(impresora) + " where id="+ str(id) + ""
-
-        cursor.execute(update)
+import models.constants as consts
 
 
-        cursor.close() #close the pointer to the database.
-        conn.commit()
-        conn.close()
-        return 'Se actualizo la impresion'
+def update_jobs(id, impresora):
+    conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+    # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
+    cursor = conn.cursor()  #connection pointer to the database.
+    if impresora == 0:
+        update = "update impresiones set id_impresora = NULL, estado=1  where id=" + str(id) + ";"
+    else:
+        update = "update impresiones set id_impresora =" + str(impresora) + ", estado=1 where id=" + str(id) + ";"
+
+    cursor.execute(update)
+    cursor.close() #close the pointer to the database.
+    conn.commit()
+    conn.close()
+    return 'Se actualizo la impresion'

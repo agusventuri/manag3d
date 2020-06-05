@@ -8,7 +8,7 @@ import {CONSTS} from "./constants";
 class PrinterInformation extends Component{
 
 	_handleClick=(printer,job)=>{
-		axios.put(CONSTS.host + '/updateJobPrinter/'+job+'/'+printer,
+		axios.get(CONSTS.host + '/updateJobPrinter/'+job+'/',
 			{
 				printer:printer,
 				job:job
@@ -51,8 +51,6 @@ class PrinterInformation extends Component{
 
 	_renderPrinters(){
 		const {printer}=this.props;
-		 console.log("este es el estado"+printer.printer_state);
-		 console.log("este es el moment", new Date(1587752299*1000))
 		return Object.keys(printer).map(currency =>( //cada CURRENCY es el indice de la impresora en el JSON(0,1,2..)
 					<tr key={currency}> 
 						<td className="stateTd">

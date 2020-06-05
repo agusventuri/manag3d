@@ -8,8 +8,7 @@ import DropdownItem from "react-bootstrap/DropdownItem";
 
 class PendingJobs extends Component{
     _handleClick=(printer,job)=>{
-        console.log("job handle: "+job)
-        axios.put(CONSTS.host + '/updateJobPrinter/'+job+'/',
+        axios.get(CONSTS.host + '/updateJobPrinter/'+job+'/'+printer,
             {
                 printer:printer,
                 job:job
@@ -19,6 +18,7 @@ class PendingJobs extends Component{
     }
     _renderPending(){
         const {jobs,printers}=this.props;
+        console.log('bbbbbbbbbbbbbbbbbb', printers)
         return Object.keys(jobs).map(currency =>( //cada CURRENCY es el indice de la impresora en el JSON(0,1,2..)
                 <tr key={currency}>
                     <td key={currency} className="pendientesTd">
