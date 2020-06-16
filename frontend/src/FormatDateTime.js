@@ -16,7 +16,6 @@ function FormatIntToTime(number){
 }
 
 function FormatIntToDateTime(number){
-	console.log('hora actual segundos: '+parseInt(new Date().getTime() / 1000))
 	if(!number){
 		return "---"
 	}else{

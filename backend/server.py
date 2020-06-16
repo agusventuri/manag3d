@@ -1,26 +1,22 @@
 from flask import Flask, render_template
-from backend.printer_observer import PrinterObserver
+from flask_cors import CORS, cross_origin
+from models.updateJobs import update_jobs
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
-po = PrinterObserver("192.168.0.3", ["test"])
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/")
 def index():
     return "Bienvenido a Manag3d"
 
-
-@app.route("/hello")
-def hello():
-    return "Hello World!"
-
-
-@app.route("/dashboard")
-def dashboard():
-    msg = None
-    while (msg is None):
-        print("uff")
-        msg = po.get_state()
-
+@app.route("/updateJobPrinter/<idjob>/", defaults={"idimpresora": 0})
+@app.route("/updateJobPrinter/<idjob>/<idimpresora>" )
+@cross_origin()
+def asignar(idjob,idimpresora):
+    print(idjob)
+    print(idimpresora)
+    msg = update_jobs(idjob, idimpresora)
     return str(msg)
 
 if __name__ == "__main__":

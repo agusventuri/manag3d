@@ -1,19 +1,13 @@
 import React,{Component} from 'react';
-import ReactDOM from 'react-dom';
-// import {browserHistory} from 'react-router'
-import {BrowserRouter,Switch,Route,Redirect,Link} from 'react-router-dom'
-import Moment from 'react-moment';
-// import NavBar from './NavBar/NavBar';
-import logo from './logo.svg';
 import './App.css';
 import Paho from 'paho-mqtt';
 import './itemDashboard.css';
 import PrinterInformation from './itemDashboard.js';
-import icon3d from './impresion.svg'
 import PendingJobs from "./PendingTable.js";
 
 function onConnect() {
     mqttCli.subscribe(subscription);
+    console.log("conectado")
 }
 
 function onConnectPending() {
@@ -44,11 +38,12 @@ var mqttCliJobs=new Paho.Client(host, "myCLientId2" + new Date().getTime())
 class ManagerMQTT extends Component{
 
     state={impresora:[{
-            "printer_id": 0,
+            "printer_id": "",
             "printer_name": "",
             "printer_state": "",
             "jobs": [
                 {
+                    "job_id":"",
                     "job_state":"",
                     "start_time":0,         //fecha
                     "finish_time": 0,       //fecha
@@ -66,15 +61,15 @@ class ManagerMQTT extends Component{
     }
 
     onMessageArrived = message => {
+        console.log("on message arrive")
         if (message.payloadString === "first connection"){
             return;
         }
 
+        this.props.sendPrinters(JSON.parse(message.payloadString)[0])
         //actualizamos estados de impresoras que ya están en el dashboard
         this.setState({impresora:  Object.keys(this.state.impresora).map( imp => {
-                    // console.log("imp: "+this.state.impresora[imp].printer_id)
-                    // console.log("esto comp el if: "+this.state.impresora[imp].printer_id+" "+JSON.parse(message.payloadString)[0].printer_id)
-                    if (this.state.impresora[imp].printer_id===0){
+                    if (this.state.impresora[imp].printer_id===""){
                         return (JSON.parse(message.payloadString)[0])
                     }else{
                         if(this.state.impresora[imp].printer_id===JSON.parse(message.payloadString)[0].printer_id){
@@ -94,7 +89,6 @@ class ManagerMQTT extends Component{
         //aca agregamos las impresoras nuevas al dashboard
         var estaEnDash = false;
         Object.keys(this.state.impresora).forEach(key => {
-            //console.log("esto compara "+this.state.impresora[key].printer_id+"  "+JSON.parse(message.payloadString)[0].printer_id)
             if (this.state.impresora[key].printer_id===JSON.parse(message.payloadString)[0].printer_id) {//esta comparacion esta ok
                 estaEnDash = true;
             }
@@ -102,7 +96,6 @@ class ManagerMQTT extends Component{
         if(estaEnDash===false){
             //si es una imp que no esta en el dashboard, la agrego al state
             var estado= this.state.impresora
-            //this.setState({impresora: (this.state.impresora).unshift( JSON.stringify( JSON.parse(message.payloadString)[0] ) ) })
             estado.push(JSON.parse(message.payloadString)[0])
             this.setState({estado});
         }
@@ -112,10 +105,11 @@ class ManagerMQTT extends Component{
         this.props.mqttCli.connect({ onSuccess: onConnect})
         this.props.mqttCli.onConnectionLost = onConnectionLost;
         this.props.mqttCli.onMessageArrived = this.onMessageArrived;
+        console.log("ejecuto did mount")
     }
 
     render(){
-        if(this.state.impresora[0].printer_id===0){
+        if(this.state.impresora[0].printer_id===""){
             return null
         }
         return(
@@ -147,6 +141,7 @@ class ManagerMQTTPendientes extends Component{
     state={
         jobs:[
             {
+                "job_id":"",
                 "job_state":"",
                 "start_time":0,         //fecha
                 "finish_time": 0,       //fecha
@@ -163,36 +158,44 @@ class ManagerMQTTPendientes extends Component{
     }
 
     onMessageArrived = message => {
-        //debugger;
         //aca agregamos las impresoras nuevas al dashboard
-        console.log(message.payloadString)
-
         if (message.payloadString === "first connection"){
             return;
         }
-
-        var estaEnDash = false;
-
-        Object.keys(this.state.jobs).forEach(key => {
-            //console.log("esto compara "+this.state.impresora[key].printer_id+"  "+JSON.parse(message.payloadString)[0].printer_id)
-            if (this.state.jobs[key].job_id === JSON.parse(message.payloadString)[0].job_id) {//esta comparacion esta ok
-                estaEnDash = true;
-            }
-        });
-        if (estaEnDash === false) {
-            //si es un trabajo  que no esta en el dashboard, la agrego al state
-            var estado = this.state.jobs
-            //this.setState({impresora: (this.state.impresora).unshift( JSON.stringify( JSON.parse(message.payloadString)[0] ) ) })
-            estado.push(JSON.parse(message.payloadString)[0])
-            this.setState({estado})
+        if (message.payloadString === "[{}]") {
+            this.setState({
+                jobs:[
+                    {
+                        "job_id":"",
+                        "job_state":"",
+                        "start_time":0,         //fecha
+                        "finish_time": 0,       //fecha
+                        "completion": 0,
+                        "print_time": 0,        //hhmmss
+                        "print_time_left":0,    //hhmmss
+                        "customer":"",
+                        "file": {
+                            "id":0,
+                            "name":"",
+                            "estimated_time":0    //hhmmss
+                        }
+                    }]
+            })
+            return;
         }
+
+        this.setState({jobs:JSON.parse(message.payloadString)})
     }
 
     componentDidMount() {
         this.props.mqttCliJobs.connect({ onSuccess: onConnectPending})
         this.props.mqttCliJobs.onConnectionLost = onConnectionLostPending;
         this.props.mqttCliJobs.onMessageArrived = this.onMessageArrived;
-        }
+    }
+
+    // componentWillReceiveProps(nextProps, nextState) {
+    //     console.log('para vos josue: ', nextProps)
+    // }
 
     render(){
         return(
@@ -204,9 +207,9 @@ class ManagerMQTTPendientes extends Component{
                     </tr>
                     </thead>
                     <tbody className="bodyDashboard">
-                    {this.state.jobs.length === 1
+                    {this.state.jobs[0].job_id ===""
                         ? <tr><td className="pendientesTd">No existen pendientes</td></tr>
-                        : <PendingJobs printer={this.state.jobs}/>
+                        : <PendingJobs jobs={this.state.jobs} printers={this.props.impresora}/>
                     }
                     </tbody>
                 </table>
@@ -217,8 +220,57 @@ class ManagerMQTTPendientes extends Component{
 
 
 class Dashboard extends Component {
+    state={impresora:[{
+            "printer_id": "",
+            "printer_name": "",
+            "printer_state": "",
+            "jobs": [
+                {
+                    "job_id":"",
+                    "job_state":"",
+                    "start_time":0,         //fecha
+                    "finish_time": 0,       //fecha
+                    "completion": 0,
+                    "print_time": 0,        //hhmmss
+                    "print_time_left":0,    //hhmmss
+                    "customer":"",
+                    "file": {
+                        "id":0,
+                        "name":"",
+                        "estimated_time":0    //hhmmss
+                    }
+                }]
+        }]
+    }
     handlePagClick = (pag) => {
         return this.props.history.push(pag);
+    }
+
+    //recibo impresoras desde mqtt manage para pasarselas a mqttPending
+    _receivePrinters=(printer)=> {
+        this.setState({
+                impresora: Object.keys(this.state.impresora).map(imp => {
+                        if (this.state.impresora[imp].printer_id === "") {
+                            return (printer)
+
+                        } else {
+                            if (this.state.impresora[imp].printer_id === printer.printer_id) {
+                                return (printer)
+                            } else {
+                                // var estado= this.state.impresora
+                                // console.log('aaaaaaaaaaaaa',estado)
+                                // estado.push(printer)
+                                // console.log('cccccccccccccccccccc',estado)
+                                // return this.setState({impresora:estado});
+                                //return JSON.parse( (this.state.impresora).push( JSON.parse(message.payloadString)[0] ) )
+                                return this.state.impresora[imp]
+                            }
+                        }
+
+                    }
+                )
+            }
+        )
     }
     render(){
         return (
@@ -228,10 +280,10 @@ class Dashboard extends Component {
                 </div>
                 <div className="row flex-xl-nowrap">
                     <div className="col-md-10 col-xl-10" >
-                        <ManagerMQTT mqttCli={mqttCli} suscription={subscription}/>
+                        <ManagerMQTT mqttCli={mqttCli} suscription={subscription} sendPrinters={this._receivePrinters}/>
                     </div>
                     <div className="col-md-2 col-xl-2 principalPendiente" >
-                        <ManagerMQTTPendientes mqttCliJobs={mqttCliJobs} suscription={subscriptionJobs}/>
+                        <ManagerMQTTPendientes mqttCliJobs={mqttCliJobs} suscription={subscriptionJobs} impresora={this.state.impresora}/>
                     </div>
                 </div>
             </div>

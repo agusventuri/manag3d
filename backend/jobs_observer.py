@@ -24,6 +24,7 @@ class JobsObserver:
         row = cursor.fetchall()
         cursor.close()
         conn.close()
+        self.pending_jobs = {}
         for j in row:
             j_id = j[0]
 

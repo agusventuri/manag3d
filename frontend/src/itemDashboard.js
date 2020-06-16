@@ -1,9 +1,21 @@
 import React,{Component} from 'react';
 import './App.css';
 import './itemDashboard.css'
+import axios from "axios";
 import {FormatIntToDateTime,FormatIntToTime,GetFinishTime} from './FormatDateTime.js';
+import {CONSTS} from "./constants";
 
 class PrinterInformation extends Component{
+
+	_handleClick=(printer,job)=>{
+		axios.get(CONSTS.host + '/updateJobPrinter/'+job+'/',
+			{
+				printer:printer,
+				job:job
+			}
+		).then(()=>{alert("Se ha quitado la impresión pendiente con éxito, estamos actualizando la página, por favor espere un momento")})
+			.catch(()=>{alert("Ocurrió un error durante la actualización, intente en un momento"+printer+job)})
+	}
 
 	printerStateSwitch(param) {
 		switch(param) {
@@ -39,9 +51,6 @@ class PrinterInformation extends Component{
 
 	_renderPrinters(){
 		const {printer}=this.props;
-		// console.log(printer);
-		// console.log("este es el estado"+printer.printer_state);
-		// console.log("este es el moment", new Date(1587752299*1000))
 		return Object.keys(printer).map(currency =>( //cada CURRENCY es el indice de la impresora en el JSON(0,1,2..)
 					<tr key={currency}> 
 						<td className="stateTd">
@@ -66,6 +75,7 @@ class PrinterInformation extends Component{
 								</div>
 							</div>
 						</td>
+
 						{Object.keys(printer[currency].jobs).map(jobcurrency =>
 							<td key={jobcurrency} className="jobsTd">
 								<div className="card text-dark bg-light">
@@ -73,6 +83,10 @@ class PrinterInformation extends Component{
 										<div className="list-group">
 											<div className={"list-group-item align-items-center list-group-item-action " + this.jobStateSwitch(printer[currency].jobs[jobcurrency].job_state)}>
 												Fecha de inicio
+												{printer[currency].jobs[jobcurrency].job_state==="Encolado"
+												?<button className="close" onClick={()=>this._handleClick(printer[currency].printer_id,printer[currency].jobs[jobcurrency].file.id)}>x</button>
+												:null
+												}
 												<br />
                         <span className="badge badge-info badge-pill">
                             {FormatIntToDateTime(printer[currency].jobs[jobcurrency].start_time)}
@@ -130,8 +144,16 @@ class PrinterInformation extends Component{
 				)
 	}
 	render(){
-		return(this._renderPrinters())
+		return(
+			this._renderPrinters()
+
+		)
 
 	}
 }
+
 export default PrinterInformation
+{/*<SendUpdate
+					printer={this.state.printer}
+					job={this.state.job}
+				/>*/}
