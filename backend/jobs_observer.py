@@ -2,7 +2,7 @@ import json
 import paho.mqtt.client as mqtt
 import schedule
 import pymysql
-import models.constants as consts
+import backend.models.constants as consts
 from models.job import Job
 
 
@@ -17,8 +17,8 @@ class JobsObserver:
         schedule.run_pending()
 
     def check_pending_jobs(self):
-        conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
-        # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
+        #conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * from impresiones WHERE estado=1 AND id_impresora IS NULL;")
         row = cursor.fetchall()

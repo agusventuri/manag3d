@@ -34,13 +34,13 @@ DB_USER_REMOTE = "ufi5pvu38rgxyyki"  		                                # user
 DB_PASS_REMOTE = "wDA27vy9GAK4UVepDOHx"		                            # user password
 DB_NAME_REMOTE = "bxgiympztcdyk1mlijne"		                            # database name
 
-DB_HOST = "/var/run/mysqld/mysqld.sock"             # server
-DB_USER = "tesis"  		                            # user
-DB_PASS = "TesisPrint3d"                            # user password
-DB_NAME = "manag3d"		                            # database name
+#DB_HOST = "/var/run/mysqld/mysqld.sock"             # server
+#DB_USER = "tesis"  		                            # user
+#DB_PASS = "TesisPrint3d"                            # user password
+#DB_NAME = "manag3d"		                            # database name
 
 # mqtt connection related ---------------------------------------------
-MQTT_HOST = "192.168.0.3"
+MQTT_HOST = "192.168.1.18"
 
 # topic related         ---------------------------------------------
 TOPIC_PROGRESS = "printer/+/progress/#"

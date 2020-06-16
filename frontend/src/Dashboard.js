@@ -27,7 +27,7 @@ function onConnectionLostPending(responseObject) {
     }
 }
 
-var host = "ws://192.168.0.3:9001/mqtt"
+var host = "ws://192.168.1.18:9001/mqtt"
 var subscription="dashboard/printers";
 var subscriptionJobs="dashboard/jobs";
 var subscriptionStartup="startup"
@@ -66,7 +66,7 @@ class ManagerMQTT extends Component{
             return;
         }
 
-        this.props.sendPrinters(JSON.parse(message.payloadString)[0])
+        this.props.sendPrinters(JSON.parse(message.payloadString))
         //actualizamos estados de impresoras que ya están en el dashboard
         this.setState({impresora:  Object.keys(this.state.impresora).map( imp => {
                     if (this.state.impresora[imp].printer_id===""){
@@ -248,29 +248,39 @@ class Dashboard extends Component {
 
     //recibo impresoras desde mqtt manage para pasarselas a mqttPending
     _receivePrinters=(printer)=> {
+        console.log("PRINTERRR")
+        console.log(printer)
         this.setState({
                 impresora: Object.keys(this.state.impresora).map(imp => {
-                        if (this.state.impresora[imp].printer_id === "") {
-                            return (printer)
+                    if (this.state.impresora[imp].printer_id === "") {
+                        return (printer[imp])
 
+                    } else {
+                        if (this.state.impresora[imp].printer_id === printer[0].printer_id) {
+                            return (printer[0])
                         } else {
-                            if (this.state.impresora[imp].printer_id === printer.printer_id) {
-                                return (printer)
-                            } else {
-                                // var estado= this.state.impresora
-                                // console.log('aaaaaaaaaaaaa',estado)
-                                // estado.push(printer)
-                                // console.log('cccccccccccccccccccc',estado)
-                                // return this.setState({impresora:estado});
-                                //return JSON.parse( (this.state.impresora).push( JSON.parse(message.payloadString)[0] ) )
-                                return this.state.impresora[imp]
-                            }
-                        }
+                          return this.state.impresora[imp]
+                    }
+                }
+
 
                     }
                 )
             }
         )
+        //aca agregamos las impresoras nuevas al dashboard
+        var estaEnDash = false;
+        Object.keys(this.state.impresora).forEach(key => {
+            if (this.state.impresora[key].printer_id===printer[0].printer_id) {//esta comparacion esta ok
+                estaEnDash = true;
+            }
+        });
+        if(estaEnDash===false){
+            //si es una imp que no esta en el dashboard, la agrego al state
+            var estado= this.state.impresora
+            estado.push(printer[0])
+            this.setState({estado});
+        }
     }
     render(){
         return (

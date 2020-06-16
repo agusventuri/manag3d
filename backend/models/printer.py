@@ -11,8 +11,8 @@ class Printer:
         self.state = consts.PRINTER_CONNECTED
         self.timestamp = timestamp
 
-        conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
-        # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
+        #conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * from impresoras WHERE id_impresora=" + self.id)
         row = cursor.fetchall()
@@ -38,8 +38,8 @@ class Printer:
         for job in self.pending_jobs:
             if str(job_id) == str(job.id):
                 self.pending_jobs.remove(job)
-                conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
-                # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
+                #conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+                conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
                 cursor = conn.cursor()  # connection pointer to the database.
                 sql = 'UPDATE impresiones SET id_impresora = NULL, estado = 2, orden = NULL WHERE id = ' + str(job.id)
                 cursor.execute(sql)
@@ -48,8 +48,8 @@ class Printer:
                 conn.close()
                 break
 
-        conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
-        # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
+        #conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * FROM impresiones WHERE id=" + job_id)
         row = cursor.fetchone()
