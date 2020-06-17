@@ -32,7 +32,6 @@ class Printer:
 
         self.jobs = deque()
         self.pending_jobs = deque()
-        self.add_job(job_id, pdp_print_time, pdp_print_time_left, pdp_completion)
 
     def add_job(self, job_id, print_time, print_time_left, completion):
         for job in self.pending_jobs:
@@ -53,7 +52,6 @@ class Printer:
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * FROM impresiones WHERE id=" + job_id)
         row = cursor.fetchone()
-        print(row)
         cursor.close()
         conn.close()
 
@@ -71,7 +69,10 @@ class Printer:
 
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id, event):
         self.timestamp = timestamp
-        last_job = self.jobs[-1]
+
+        last_job = None
+        if len(self.jobs) > 0:
+            last_job = self.jobs[-1]
 
         print(text)
         if text == consts.PROGRESS_FINISHING:
@@ -82,9 +83,6 @@ class Printer:
         elif text == consts.PROGRESS_STARTING:
             self.state = consts.PRINTER_HEATING
 
-        # if str(last_job.id) != job_id:
-        #     self.add_job(job_id, print_time, print_time_left, completion)
-        # else:
         if event and (text == consts.EVENT_PRINT_CANCELLED or text == consts.EVENT_PRINT_FAILED):
             last_job.cancel(timestamp)
 

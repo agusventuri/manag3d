@@ -111,7 +111,8 @@ class PrinterObserver:
             printer = Printer(printer_id,
                               timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id)
             self.printers[printer_id] = printer
-        printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, event)
+        else:
+            printer.update(timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, event)
         # print(str(printer))
         self.dispatch_mqtt_update(client, printer)
 
