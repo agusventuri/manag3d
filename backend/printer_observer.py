@@ -23,6 +23,12 @@ class PrinterObserver:
             self.dispatch_all(client)
             return None
 
+        if message.topic == consts.TOPIC_KEEPALIVE:
+            self.check_queued_jobs()
+            self.dispatch_all(client)
+            # schedule.run_pending()
+            return None
+
         parsed_message = json.loads(str(message.payload.decode("utf-8")))
 
         topic_split = message.topic.split("/")
@@ -51,9 +57,6 @@ class PrinterObserver:
 
             self.update_printer(client, printer_id, timestamp, pdp_completion, pdp_print_time_left, pdp_print_time, pds_text, job_id, True)
 
-        self.check_queued_jobs()
-        #schedule.run_pending()
-
     def on_disconnect(self, client, userdata, rc=0):
         print("Disconnected result code "+str(rc))
         client.loop_stop()
@@ -73,6 +76,7 @@ class PrinterObserver:
         client.subscribe(consts.TOPIC_PROGRESS)
         client.subscribe(consts.TOPIC_EVENTS)
         client.subscribe(consts.TOPIC_STARTUP)
+        client.subscribe(consts.TOPIC_KEEPALIVE)
 
         schedule.every(10).seconds.do(self.check_queued_jobs)
 
@@ -88,20 +92,11 @@ class PrinterObserver:
         for printer in self.printers.values():
             jobs_to_append.append([printer.id, []])
 
-        print("--------------------------------")
-        print(jobs_to_append)
-
         for j in row:
             j_id_printer = j[3]
-            print("jid: ", j_id_printer)
             for printer in jobs_to_append:
-                print("printer: ",printer)
                 if str(printer[0]) == str(j_id_printer):
-                    print("entre")
                     printer[1].append(Job(j, 0, 0, 0))
-                    print("printer: ",printer)
-
-        print("jobs: ",jobs_to_append)
 
         for printer in jobs_to_append:
             self.printers[str(printer[0])].add_pending_jobs(printer[1])
