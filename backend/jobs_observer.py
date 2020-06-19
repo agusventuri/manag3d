@@ -10,7 +10,7 @@ class JobsObserver:
 
     def __init__(self, broker):
         self.broker = broker
-        schedule.every(10).seconds.do(self.check_pending_jobs)
+        schedule.every(5).seconds.do(self.check_pending_jobs)
         self.pending_jobs = {}
 
     def observe(self):
@@ -51,6 +51,7 @@ class JobsObserver:
         client.loop_start()
         client.publish(consts.TOPIC_DISPATCH_PENDING, dump)
         client.loop_stop()
+
 
 jo = JobsObserver(consts.MQTT_HOST)
 while True:

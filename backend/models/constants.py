@@ -48,6 +48,7 @@ TOPIC_EVENTS = "printer/+/event/#"
 TOPIC_DISPATCH_PRINTERS = "dashboard/printers"
 TOPIC_DISPATCH_PENDING = "dashboard/jobs"
 TOPIC_STARTUP = "startup"
+TOPIC_KEEPALIVE = "keepalive"
 
 EVENT_PRINT_CANCELLED = "PrintCancelled"
 EVENT_PRINT_CANCELLING = "PrintCancelling"
