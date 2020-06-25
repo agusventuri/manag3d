@@ -51,6 +51,7 @@ class PrinterInformation extends Component{
 
 	_renderPrinters(){
 		const {printer}=this.props;
+		console.log(printer)
 		return Object.keys(printer).map(currency =>( //cada CURRENCY es el indice de la impresora en el JSON(0,1,2..)
 					<tr key={currency}> 
 						<td className="stateTd">
