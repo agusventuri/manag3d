@@ -65,7 +65,8 @@ class Printer:
                     return None
 
             self.pending_jobs.append(job)
-            self.pending_jobs = deque(sorted(self.pending_jobs, key=lambda x: x.order))
+
+        self.pending_jobs = deque(sorted(self.pending_jobs, key=lambda x: x.order))
 
     def update(self, timestamp, completion, print_time_left, print_time, text, job_id, event):
         self.timestamp = timestamp
