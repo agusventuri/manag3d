@@ -81,8 +81,8 @@ class PrinterObserver:
         schedule.every(10).seconds.do(self.check_queued_jobs)
 
     def check_queued_jobs(self):
-        conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
-        # conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
+        #conn = pymysql.connect(unix_socket=consts.DB_HOST, user=consts.DB_USER, passwd=consts.DB_PASS, db=consts.DB_NAME)
+        conn = pymysql.connect(host=consts.DB_HOST_REMOTE, user=consts.DB_USER_REMOTE, passwd=consts.DB_PASS_REMOTE, db=consts.DB_NAME_REMOTE)
         cursor = conn.cursor()  # connection pointer to the database.
         cursor.execute("SELECT * from impresiones WHERE estado=1 AND id_impresora IS NOT NULL;")
         row = cursor.fetchall()

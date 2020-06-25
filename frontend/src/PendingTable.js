@@ -14,11 +14,10 @@ class PendingJobs extends Component{
                 job:job
             }
         ).then(()=>{alert("Se ha asigando la impresión con éxito, estamos actualizando la página, por favor espere un momento")})
-            .catch(()=>{alert("Ocurrió un error durante la actualización, intente en un momento"+printer+job)})
+            .catch(()=>{alert("Ocurrió un error durante la actualización, intente en un momento")})
     }
     _renderPending(){
         const {jobs,printers}=this.props;
-        console.log('bbbbbbbbbbbbbbbbbb', printers)
         return Object.keys(jobs).map(currency =>( //cada CURRENCY es el indice de la impresora en el JSON(0,1,2..)
                 <tr key={currency}>
                     <td key={currency} className="pendientesTd">
