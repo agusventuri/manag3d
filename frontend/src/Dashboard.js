@@ -102,6 +102,9 @@ class ManagerMQTT extends Component{
     }
 
     componentDidMount() {
+        if (this.props.mqttCli.isConnected()){
+            this.props.mqttCli.disconnect()
+        }
         this.props.mqttCli.connect({ onSuccess: onConnect})
         this.props.mqttCli.onConnectionLost = onConnectionLost;
         this.props.mqttCli.onMessageArrived = this.onMessageArrived;
@@ -188,6 +191,9 @@ class ManagerMQTTPendientes extends Component{
     }
 
     componentDidMount() {
+        if (this.props.mqttCliJobs.isConnected()){
+            this.props.mqttCliJobs.disconnect()
+        }
         this.props.mqttCliJobs.connect({ onSuccess: onConnectPending})
         this.props.mqttCliJobs.onConnectionLost = onConnectionLostPending;
         this.props.mqttCliJobs.onMessageArrived = this.onMessageArrived;
