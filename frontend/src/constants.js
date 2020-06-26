@@ -1,3 +1,3 @@
 export const CONSTS = {
-    host: "http://186.138.227.22:5001"
+    host: "http://186.138.227.22:5000"
 };
