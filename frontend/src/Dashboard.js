@@ -7,7 +7,6 @@ import PendingJobs from "./PendingTable.js";
 
 function onConnect() {
     mqttCli.subscribe(subscription);
-    console.log("conectado")
 }
 
 function onConnectPending() {
@@ -17,17 +16,17 @@ function onConnectPending() {
 
 function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:"+responseObject.errorMessage);
+        console.log("");
     }
 }
 
 function onConnectionLostPending(responseObject) {
     if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:"+responseObject.errorMessage);
+        console.log("");
     }
 }
 
-var host = "ws://192.168.1.18:9001/mqtt"
+var host = "ws://186.138.227.22:9001/mqtt"
 var subscription="dashboard/printers";
 var subscriptionJobs="dashboard/jobs";
 var subscriptionStartup="startup"
@@ -61,7 +60,6 @@ class ManagerMQTT extends Component{
     }
 
     onMessageArrived = message => {
-        console.log("on message arrive")
         if (message.payloadString === "first connection"){
             return;
         }
@@ -108,7 +106,6 @@ class ManagerMQTT extends Component{
         this.props.mqttCli.connect({ onSuccess: onConnect})
         this.props.mqttCli.onConnectionLost = onConnectionLost;
         this.props.mqttCli.onMessageArrived = this.onMessageArrived;
-        console.log("ejecuto did mount")
     }
 
     render(){
@@ -199,10 +196,6 @@ class ManagerMQTTPendientes extends Component{
         this.props.mqttCliJobs.onMessageArrived = this.onMessageArrived;
     }
 
-    // componentWillReceiveProps(nextProps, nextState) {
-    //     console.log('para vos josue: ', nextProps)
-    // }
-
     render(){
         return(
             <div className="divPendientes">
@@ -254,8 +247,6 @@ class Dashboard extends Component {
 
     //recibo impresoras desde mqtt manage para pasarselas a mqttPending
     _receivePrinters=(printer)=> {
-        console.log("PRINTERRR")
-        console.log(printer)
         this.setState({
                 impresora: Object.keys(this.state.impresora).map(imp => {
                     if (this.state.impresora[imp].printer_id === "") {
